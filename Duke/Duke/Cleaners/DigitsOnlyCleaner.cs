@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Duke
+namespace Duke.Cleaners
 {
     public class DigitsOnlyCleaner : ICleaner
     {
