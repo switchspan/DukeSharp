@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cleaners\AbstractRuleBasedCleaner.cs" />
+    <Compile Include="Cleaners\GenericValueCleaner.cs" />
+    <Compile Include="Cleaners\LowerCaseNormalizeCleaner.cs" />
     <Compile Include="Cleaners\PersonNameCleaner.cs" />
     <Compile Include="Column.cs" />
     <Compile Include="ConfigLoader.cs" />
@@ -50,9 +52,13 @@
     <Compile Include="IComparator.cs" />
     <Compile Include="IRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Property.cs" />
     <Compile Include="RecordImpl.cs" />
+    <Compile Include="RecordIterator.cs" />
+    <Compile Include="Utils\CSVReader.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Cleaners\Transform.cs" />
+    <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Comparators\" />

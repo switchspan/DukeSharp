@@ -5,7 +5,12 @@ using System.Text;
 
 namespace Duke.Cleaners
 {
-    public class PersonNameCleaner
+    public class PersonNameCleaner : ICleaner
     {
+
+        public string Clean(string value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

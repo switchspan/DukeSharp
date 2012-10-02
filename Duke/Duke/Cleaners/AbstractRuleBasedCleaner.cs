@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Duke.Cleaners
 {
@@ -10,7 +8,7 @@ namespace Duke.Cleaners
     /// </summary>
     public abstract class AbstractRuleBasedCleaner : ICleaner
     {
-        private List<Transform> _transforms; 
+        private readonly List<Transform> _transforms;
 
         /// <summary>
         /// Initializes and emply cleaner.
@@ -20,6 +18,7 @@ namespace Duke.Cleaners
             _transforms = new List<Transform>();
         }
 
+        #region ICleaner Members
 
         public string Clean(string value)
         {
@@ -31,6 +30,8 @@ namespace Duke.Cleaners
 
             return value;
         }
+
+        #endregion
 
         /// <summary>
         /// Adds a rule for replacing all substrings matching the regular
@@ -54,6 +55,5 @@ namespace Duke.Cleaners
         {
             _transforms.Add(new Transform(regex, replacement, groupno));
         }
-
     }
 }

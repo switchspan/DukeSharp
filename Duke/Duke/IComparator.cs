@@ -6,7 +6,7 @@ namespace Duke
     /// An operator which compares two values for similarity, and returns a number in the range 0.0 to 1.0 
     /// indicating the degree of similarity.
     /// </summary>
-    internal interface IComparator
+    public interface IComparator
     {
         /// <summary>
         /// Determines whether this instance is tokenized.
