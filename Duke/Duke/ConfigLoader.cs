@@ -6,10 +6,10 @@ using System.Text;
 namespace Duke
 {
     /// <summary>
-    /// A function which can turn a value into a normalized value suitable for comparison.
+    /// Can read XML configuration files and return a fully set up configuration.
     /// </summary>
-    public interface ICleaner
+    class ConfigLoader
     {
-        String Clean(String value);
+
     }
 }

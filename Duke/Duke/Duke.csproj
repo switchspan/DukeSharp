@@ -40,9 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractRuleBasedCleaner.cs" />
     <Compile Include="Column.cs" />
+    <Compile Include="ConfigLoader.cs" />
     <Compile Include="ICleaner.cs" />
+    <Compile Include="IComparator.cs" />
+    <Compile Include="IRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecordImpl.cs" />
+    <Compile Include="Transform.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
