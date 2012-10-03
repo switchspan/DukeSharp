@@ -56,6 +56,9 @@
     <Compile Include="Comparators\ExactComparator.cs" />
     <Compile Include="Comparators\JaccardIndexComparator.cs" />
     <Compile Include="Comparators\JaroWinkler.cs" />
+    <Compile Include="Comparators\JaroWinklerTokenized.cs" />
+    <Compile Include="Comparators\Levenshtein.cs" />
+    <Compile Include="Comparators\Match.cs" />
     <Compile Include="ConfigLoader.cs" />
     <Compile Include="Cleaners\DigitsOnlyCleaner.cs" />
     <Compile Include="Cleaners\FamilyCommaGivenCleaner.cs" />
