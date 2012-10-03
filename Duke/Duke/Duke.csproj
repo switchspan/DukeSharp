@@ -73,6 +73,9 @@
     <Compile Include="ICleaner.cs" />
     <Compile Include="IComparator.cs" />
     <Compile Include="IRecord.cs" />
+    <Compile Include="Matchers\AbstractMatchListener.cs" />
+    <Compile Include="Matchers\IMatchListener.cs" />
+    <Compile Include="Matchers\PrintMatchListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="RecordImpl.cs" />
@@ -85,7 +88,6 @@
   <ItemGroup>
     <Folder Include="Datasources\" />
     <Folder Include="Examples\" />
-    <Folder Include="Matchers\" />
     <Folder Include="Server\" />
   </ItemGroup>
   <ItemGroup>
