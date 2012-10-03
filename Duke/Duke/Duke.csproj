@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Lucene.Net, Version=2.9.4.2, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -70,12 +71,20 @@
     <Compile Include="ConfigLoader.cs" />
     <Compile Include="Cleaners\DigitsOnlyCleaner.cs" />
     <Compile Include="Cleaners\FamilyCommaGivenCleaner.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="DatabaseProperties.cs" />
     <Compile Include="ICleaner.cs" />
     <Compile Include="IComparator.cs" />
+    <Compile Include="IDatabase.cs" />
+    <Compile Include="IDataSource.cs" />
     <Compile Include="IRecord.cs" />
+    <Compile Include="LuceneDatabase.cs" />
     <Compile Include="Matchers\AbstractMatchListener.cs" />
     <Compile Include="Matchers\IMatchListener.cs" />
+    <Compile Include="Matchers\Link.cs" />
     <Compile Include="Matchers\PrintMatchListener.cs" />
+    <Compile Include="Matchers\TestFileListener.cs" />
+    <Compile Include="Processor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="RecordImpl.cs" />
@@ -91,6 +100,7 @@
     <Folder Include="Server\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\lucene_net\Lucene.Net.dll" />
     <Content Include="name-mappings.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
