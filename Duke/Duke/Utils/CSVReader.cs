@@ -3,15 +3,15 @@ using System.IO;
 
 namespace Duke.Utils
 {
-    public class CSVReader
+    public class CsvReader
     {
-        private char[] _buf;
-        private StreamReader _sr;
+        private readonly char[] _buf;
+        private readonly StreamReader _sr;
         private int _len;
         private int _pos; // where we are in the buffer
-        private string[] _tmp;
+        private readonly string[] _tmp;
 
-        public CSVReader(StreamReader sr)
+        public CsvReader(StreamReader sr)
         {
             _buf = new char[65356];
             _pos = 0;
@@ -21,7 +21,7 @@ namespace Duke.Utils
         }
 
         // this is used for testing!
-        public CSVReader(StreamReader sr, int buflen)
+        public CsvReader(StreamReader sr, int buflen)
         {
             _buf = new char[buflen];
             _pos = 0;
@@ -38,7 +38,7 @@ namespace Duke.Utils
             int colno = 0;
             int rowstart = _pos; // used for rebuffering at end
             int prev = _pos - 1;
-            bool escaped_quote = false; //did we find an escaped quote?
+            bool escapedQuote = false; //did we find an escaped quote?
             while (_pos < _len)
             {
                 bool startquote = false;
@@ -61,15 +61,13 @@ namespace Duke.Utils
                     if (_pos + 1 >= _len ||
                         (!(_buf[_pos] == '\"' && _buf[_pos + 1] != '\"'))) 
                         break; // we found the end of this value, so stop
-                    else
-                    {
-                        // found a "". carry on
-                        escaped_quote = true;
-                        _pos += 2; // step to the character after next
-                    }
+                    
+                    // found a "". carry on
+                    escapedQuote = true;
+                    _pos += 2; // step to the character after next
                 }
 
-                if (escaped_quote)
+                if (escapedQuote)
                     _tmp[colno++] = Unescape(new string(_buf, prev + 1, _pos - prev - 1));
                 else
                 {
@@ -109,10 +107,8 @@ namespace Duke.Utils
                     _pos = 0;
                     return Next();
                 }
-                else
-                {
-                    _len = -1;
-                }
+                
+                _len = -1;
             } 
 
             var row = new string[colno];

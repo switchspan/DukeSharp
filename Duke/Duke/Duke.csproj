@@ -46,6 +46,7 @@
     <Compile Include="Cleaners\NoCleaningCleaner.cs" />
     <Compile Include="Cleaners\PersonNameCleaner.cs" />
     <Compile Include="Cleaners\RegexpCleaner.cs" />
+    <Compile Include="Cleaners\TrimCleaner.cs" />
     <Compile Include="Column.cs" />
     <Compile Include="ConfigLoader.cs" />
     <Compile Include="Cleaners\DigitsOnlyCleaner.cs" />
