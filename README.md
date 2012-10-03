@@ -1,9 +1,7 @@
-DukeSharp
-=========
+#DukeSharp
 ** Fast deduplication engine **
+
 A loose C# port of the duke fast deduplication engine by Lars Marius Garshol (thank you Lars!)
-
-
 
 ## License
 
