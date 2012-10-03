@@ -43,7 +43,9 @@
     <Compile Include="Cleaners\AbstractRuleBasedCleaner.cs" />
     <Compile Include="Cleaners\GenericValueCleaner.cs" />
     <Compile Include="Cleaners\LowerCaseNormalizeCleaner.cs" />
+    <Compile Include="Cleaners\NoCleaningCleaner.cs" />
     <Compile Include="Cleaners\PersonNameCleaner.cs" />
+    <Compile Include="Cleaners\RegexpCleaner.cs" />
     <Compile Include="Column.cs" />
     <Compile Include="ConfigLoader.cs" />
     <Compile Include="Cleaners\DigitsOnlyCleaner.cs" />

@@ -31,7 +31,7 @@ namespace Duke.Utils
         /// Removes trailing and leading whitespace, and also reduces each 
         /// sequence of internal whitespace to a single space.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">The string to trim whitespace from</param>
         /// <returns></returns>
         public static String NormalizeWs(String value)
         {
@@ -60,6 +60,11 @@ namespace Duke.Utils
         }
 
 
+        /// <summary>
+        /// Splits the specified string.
+        /// </summary>
+        /// <param name="str">The string to split.</param>
+        /// <returns></returns>
         public static String[] Split(String str)
         {
             var tokens = new String[(str.Length / 2) + 1];
@@ -92,6 +97,11 @@ namespace Duke.Utils
             return tmp;
         }
 
+        /// <summary>
+        /// Joins the specified pieces.
+        /// </summary>
+        /// <param name="pieces">The pieces.</param>
+        /// <returns></returns>
         public static String Join(String[] pieces)
         {
             var tmp = new StringBuilder();
