@@ -51,9 +51,11 @@
     <Compile Include="Cleaners\RegexpCleaner.cs" />
     <Compile Include="Cleaners\TrimCleaner.cs" />
     <Compile Include="Column.cs" />
+    <Compile Include="Comparators\DefaultWeightEstimator.cs" />
     <Compile Include="Comparators\DiceCoefficientComparator.cs" />
     <Compile Include="Comparators\DifferentComparator.cs" />
     <Compile Include="Comparators\ExactComparator.cs" />
+    <Compile Include="Comparators\IWeightEstimator.cs" />
     <Compile Include="Comparators\JaccardIndexComparator.cs" />
     <Compile Include="Comparators\JaroWinkler.cs" />
     <Compile Include="Comparators\JaroWinklerTokenized.cs" />
@@ -63,6 +65,8 @@
     <Compile Include="Comparators\NorphoneComparator.cs" />
     <Compile Include="Comparators\NumericComparator.cs" />
     <Compile Include="Comparators\PersonNameComparator.cs" />
+    <Compile Include="Comparators\SoundexComparator.cs" />
+    <Compile Include="Comparators\WeightedLevenshtein.cs" />
     <Compile Include="ConfigLoader.cs" />
     <Compile Include="Cleaners\DigitsOnlyCleaner.cs" />
     <Compile Include="Cleaners\FamilyCommaGivenCleaner.cs" />
