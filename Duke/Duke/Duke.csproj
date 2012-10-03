@@ -59,6 +59,10 @@
     <Compile Include="Comparators\JaroWinklerTokenized.cs" />
     <Compile Include="Comparators\Levenshtein.cs" />
     <Compile Include="Comparators\Match.cs" />
+    <Compile Include="Comparators\MetaphoneComparator.cs" />
+    <Compile Include="Comparators\NorphoneComparator.cs" />
+    <Compile Include="Comparators\NumericComparator.cs" />
+    <Compile Include="Comparators\PersonNameComparator.cs" />
     <Compile Include="ConfigLoader.cs" />
     <Compile Include="Cleaners\DigitsOnlyCleaner.cs" />
     <Compile Include="Cleaners\FamilyCommaGivenCleaner.cs" />
