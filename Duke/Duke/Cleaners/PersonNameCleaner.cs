@@ -1,16 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
+using Duke.Utils;
 
 namespace Duke.Cleaners
 {
     public class PersonNameCleaner : ICleaner
     {
+        private LowerCaseNormalizeCleaner _sub;
+        private Dictionary<String, String> _mapping; 
+
+        public PersonNameCleaner()
+        {
+            _sub = new LowerCaseNormalizeCleaner();
+
+            // load token translation _mapping (FIXME: move to static init?)
+            try
+            {
+                _mapping = LoadMapping();
+            }
+            catch (System.Exception ex)
+            {
+                //TODO: Add better error handling here
+                throw;
+            }
+        }
+
 
         public string Clean(string value)
         {
-            throw new NotImplementedException();
+            // do basic cleaning 
+            value = _sub.Clean(value);
+            if (String.IsNullOrEmpty(value))
+                return value;
+
+            // tokenize, then map tokens, then rejoin
+            String[] tokens = StringUtils.Split(value);
+            for (int ix = 0; ix < tokens.Length; ix++)
+            {
+                String mapsto = _mapping[tokens[ix]];
+                if (mapsto != null)
+                    tokens[ix] = mapsto;
+            }
+
+            return StringUtils.Join(tokens);
         }
+
+        private Dictionary<String, String> LoadMapping()
+        {
+            const string mapfile = "name-mappings.txt";
+
+            var mapping = new Dictionary<string, string>();
+            //ClassLoader cloader = Thread.currentThread().getContextClassLoader();
+            
+            using (var reader = new StreamReader(mapfile, Encoding.UTF8))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    int pos = line.IndexOf(',');
+                    mapping.Add(line.Substring(0, pos), line.Substring(pos + 1));
+                }
+            }
+
+            return mapping;
+        } 
     }
 }

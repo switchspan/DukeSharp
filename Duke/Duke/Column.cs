@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Duke
 {
     class Column
     {
-        private String _name;
-        private String _property;
-        private String _prefix;
-        private ICleaner _cleaner;
+        private readonly String _name;
+        private readonly String _property;
+        private readonly String _prefix;
+        private readonly ICleaner _cleaner;
 
         public Column(String name, String property, String prefix, ICleaner cleaner)
         {
@@ -20,29 +17,27 @@ namespace Duke
             _cleaner = cleaner;
         }
 
-        public String getName()
+        public String GetName()
         {
             return _name;
         }
 
-        public String getProperty()
+        public String GetProperty()
         {
             if (_property == null)
             {
                 return _name;
             }
-            else
-            {
-                return _property;
-            }
+            
+            return _property;
         }
 
-        public String getPrefix()
+        public String GetPrefix()
         {
             return _prefix;
         }
 
-        public ICleaner getCleaner()
+        public ICleaner GetCleaner()
         {
             return _cleaner;
         }
