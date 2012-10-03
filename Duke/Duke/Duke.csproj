@@ -43,7 +43,10 @@
     <Compile Include="Cleaners\AbstractRuleBasedCleaner.cs" />
     <Compile Include="Cleaners\GenericValueCleaner.cs" />
     <Compile Include="Cleaners\LowerCaseNormalizeCleaner.cs" />
+    <Compile Include="Cleaners\MappingFileCleaner.cs" />
     <Compile Include="Cleaners\NoCleaningCleaner.cs" />
+    <Compile Include="Cleaners\NorwegianAddressCleaner.cs" />
+    <Compile Include="Cleaners\NorwegianCompanyNameCleaner.cs" />
     <Compile Include="Cleaners\PersonNameCleaner.cs" />
     <Compile Include="Cleaners\RegexpCleaner.cs" />
     <Compile Include="Cleaners\TrimCleaner.cs" />
@@ -58,7 +61,7 @@
     <Compile Include="Property.cs" />
     <Compile Include="RecordImpl.cs" />
     <Compile Include="RecordIterator.cs" />
-    <Compile Include="Utils\CSVReader.cs" />
+    <Compile Include="Utils\CsvReader.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Cleaners\Transform.cs" />
     <Compile Include="Utils\Utils.cs" />
