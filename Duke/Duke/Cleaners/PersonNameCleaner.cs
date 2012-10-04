@@ -39,9 +39,8 @@ namespace Duke.Cleaners
             String[] tokens = StringUtils.Split(value);
             for (int ix = 0; ix < tokens.Length; ix++)
             {
-                String mapsto = _mapping[tokens[ix]];
-                if (mapsto != null)
-                    tokens[ix] = mapsto;
+                if (_mapping.ContainsKey(tokens[ix]))
+                    tokens[ix] = _mapping[tokens[ix]];
             }
 
             return StringUtils.Join(tokens);
@@ -53,7 +52,7 @@ namespace Duke.Cleaners
 
             var mapping = new Dictionary<string, string>();
             //ClassLoader cloader = Thread.currentThread().getContextClassLoader();
-            
+
             using (var reader = new StreamReader(mapfile, Encoding.UTF8))
             {
                 string line;

@@ -42,11 +42,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cleaners\DigitsOnlyCleanerTest.cs" />
+    <Compile Include="Cleaners\FamilyCommaGivenCleanerTest.cs" />
     <Compile Include="Cleaners\LowerCaseNormalizeCleanerTest.cs" />
+    <Compile Include="Cleaners\NoCleaningCleanerTest.cs" />
+    <Compile Include="Cleaners\PersonNameCleanerTest.cs" />
     <Compile Include="ColumnTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Cleaners\name-mappings.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="lib\nunit\nunit.framework.dll" />
     <Content Include="lib\nunit\version.txt" />
   </ItemGroup>
