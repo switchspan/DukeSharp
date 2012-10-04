@@ -79,6 +79,8 @@
     <Compile Include="IComparator.cs" />
     <Compile Include="IDatabase.cs" />
     <Compile Include="IDataSource.cs" />
+    <Compile Include="IEquivalenceClassDatabase.cs" />
+    <Compile Include="InMemoryClassDatabase.cs" />
     <Compile Include="InMemoryDatabase.cs" />
     <Compile Include="IRecord.cs" />
     <Compile Include="LuceneDatabase.cs" />
@@ -101,6 +103,7 @@
   <ItemGroup>
     <Folder Include="Datasources\" />
     <Folder Include="Examples\" />
+    <Folder Include="lib\nlog\" />
     <Folder Include="Server\" />
   </ItemGroup>
   <ItemGroup>
