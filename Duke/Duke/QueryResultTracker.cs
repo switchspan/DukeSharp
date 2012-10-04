@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net;
+using System.IO;
+using Lucene.Net.Analysis;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Documents;
 
 namespace Duke
 {
@@ -23,31 +24,190 @@ namespace Duke
     {
         #region Private member variables
 
+        private Configuration _config;
+        private Analyzer _analyzer;
+        private IndexSearcher _searcher;
+        private int _max_search_hits;
+        private int _min_relevance;
+
         private int _limit;
         // Ring buffer containing n last search result sizes, except for
         // searches which found nothing.
         private int[] _prevsizes;
         private int sizeix; // position in prevsizes
 
-        private Configuration _config;
+        private static int SEARCH_EXPANSION_FACTOR = 1;
+
         #endregion
 
         #region Constructors
-        public QueryResultTracker(Configuration config)
+
+        public QueryResultTracker(Configuration config, Analyzer analyzer, IndexSearcher searcher, int max_search_hits, int min_relevance)
         {
             _limit = 100;
             _prevsizes = new int[10];
             _config = config;
+            _analyzer = analyzer;
+            _max_search_hits = max_search_hits;
+            _searcher = searcher;
+            _min_relevance = min_relevance;
         }
+
         #endregion
 
         #region Member methods
+
         public List<IRecord> Lookup(IRecord record)
         {
             // first we build the combined query for all lookup properties
-            BooleanQuery query = new BooleanQuery();
-           
+            var query = new BooleanQuery();
+            foreach (var lookupProperty in _config.GetLookupProperties())
+            {
+                var values = record.GetValues(lookupProperty.GetName());
+                if (values == null)
+                    continue;
+                foreach (var value in values)
+                {
+                    ParseTokens(query, lookupProperty.GetName(), value);
+                }
+            }
 
+            // then we perform the actual search
+            return DoQuery(query);
+        }
+
+        public List<IRecord> Lookup(Property property, string value)
+        {
+            var v = CleanLucene(value);
+            if (v.Length == 0) 
+                return new List<IRecord>();
+
+            var query = ParseTokens(property.GetName(), v);
+            return DoQuery(query);
+        } 
+
+        private List<IRecord> DoQuery(Query query)
+        {
+            List<IRecord> matches;
+            try
+            {
+                ScoreDoc[] hits;
+
+                int thislimit = Math.Min(_limit, _max_search_hits);
+
+                while (true)
+                {
+                    hits = _searcher.Search(query, null, thislimit).ScoreDocs;
+                    if (hits.Length < thislimit || thislimit == _max_search_hits)
+                        break;
+                    thislimit = thislimit * 5;
+                }
+
+                matches = new List<IRecord>(Math.Min(hits.Length, _max_search_hits));
+                for (int ix = 0; ix < hits.Length && hits[ix].Score >= _min_relevance; ix++)
+                {
+                    matches.Add(new DocumentRecord(hits[ix].Doc, _searcher.Doc(hits[ix].Doc)));
+                }
+
+                if (hits.Length > 0)
+                {
+                    _prevsizes[sizeix++] = matches.Count;
+                    if (sizeix == _prevsizes.Length)
+                    {
+                        sizeix = 0;
+                        _limit = Math.Max((int)(Average() * SEARCH_EXPANSION_FACTOR), _limit);
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+
+            return matches;
+        } 
+
+        /// <summary>
+        /// Parses the query. Using this instead of a QueryParser in order to avoid 
+        /// thread-safety issues with Lucene's query parser.
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        private Query ParseTokens(string fieldName, string param)
+        {
+            var searchQuery = new BooleanQuery();
+            if (param != null)
+            {
+                var tokenStream = _analyzer.TokenStream(fieldName, new StringReader(param));
+                var attr = tokenStream.GetAttribute(typeof (CharTokenizer));
+
+                try
+                {
+                    while (tokenStream.IncrementToken())
+                    {
+                        string term = attr.ToString();
+                        Query termQuery = new TermQuery(new Term(fieldName, term));
+                        searchQuery.Add(termQuery, BooleanClause.Occur.SHOULD);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    throw new Exception(String.Format("Error parsing input string '{0}' in field {1}", param, fieldName));
+                }
+            }
+
+            return searchQuery;
+        }
+
+        private void ParseTokens(BooleanQuery parent, string fieldName, string value)
+        {
+           value = CleanLucene(value);
+          if (value.Length == 0)
+            return;
+      
+          var tokenStream = _analyzer.TokenStream(fieldName, new StringReader(value));
+          var attr = tokenStream.GetAttribute(typeof (CharTokenizer));
+                        
+          try {
+            while (tokenStream.IncrementToken()) {
+              String term = attr.ToString();
+              Query termQuery = new TermQuery(new Term(fieldName, term));
+              parent.Add(termQuery, BooleanClause.Occur.SHOULD);
+            }
+          } catch (System.Exception ex) {
+            //throw new RuntimeException("Error parsing input string '"+value+"' "+
+            //                           "in field " + fieldName);
+              throw new Exception(String.Format("Error parsing input string '{0}' in field {1}", value, fieldName));
+          }
+        }
+
+        private double Average()
+        {
+            int sum = 0;
+            int ix = 0;
+            for (; ix < _prevsizes.Length && _prevsizes[ix] != 0; ix++)
+                sum += _prevsizes[ix];
+            return sum / (double)ix;
+        }
+
+        private string CleanLucene(string query)
+        {
+            char[] tmp = new char[query.Length];
+            int count = 0;
+            for (int ix = 0; ix < query.Length; ix++)
+            {
+                char ch = query[ix];
+                if (ch != '*' && ch != '?' && ch != '!' && ch != '&' && ch != '(' &&
+                    ch != ')' && ch != '-' && ch != '+' && ch != ':' && ch != '"' &&
+                    ch != '[' && ch != ']' && ch != '~' && ch != '{' && ch != '}' &&
+                    ch != '^' && ch != '|')
+                    tmp[count++] = ch;
+            }
+
+            return new String(tmp, 0, count).Trim();
+
+        }
         #endregion
     }
 }

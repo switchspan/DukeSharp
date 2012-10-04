@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Duke.Comparators;
 
 namespace Duke
@@ -12,27 +10,28 @@ namespace Duke
     public class Configuration
     {
         #region Private member variables
+
         // there are two modes: deduplication and record linkage. in
         // deduplication mode all sources are in 'datasources'. in record
         // linkage mode they are in 'group1' and 'group2'. couldn't think
         // of a better solution. sorry.
-        private List<IDataSource> _datasources;
-        private List<IDataSource> _group1;
-        private List<IDataSource> _group2;
+        private readonly List<IDataSource> _datasources;
+        private readonly DatabaseProperties _dbprops;
+        private readonly List<IDataSource> _group1;
+        private readonly List<IDataSource> _group2;
+        private List<Property> _lookups; // subset of properties
 
         private String _path;
-        private double _threshold;
-        private double _thresholdMaybe;
 
         private Dictionary<String, Property> _properties;
         private List<Property> _proplist; // duplicate to preserve order
-        private List<Property> _lookups; // subset of properties
-
-        private DatabaseProperties _dbprops;
+        private double _threshold;
+        private double _thresholdMaybe;
 
         #endregion
 
         #region Constructors
+
         public Configuration()
         {
             _datasources = new List<IDataSource>();
@@ -40,9 +39,11 @@ namespace Duke
             _group2 = new List<IDataSource>();
             _dbprops = new DatabaseProperties();
         }
+
         #endregion
 
         #region Member methods
+
         /// <summary>
         /// Returns the data sources to use (in deduplication mode; don't use
         /// this method in record linkage mode).
@@ -51,7 +52,7 @@ namespace Duke
         public List<IDataSource> GetDataSources()
         {
             return _datasources;
-        } 
+        }
 
         /// <summary>
         /// Returns the data sources belonging to a particular group of data
@@ -74,7 +75,7 @@ namespace Duke
             }
 
             throw new Exception(String.Format("Invalid group number: {0}", groupno));
-        } 
+        }
 
         /// <summary>
         /// Adds a data source to the configuration. If in deduplication mode
@@ -132,10 +133,7 @@ namespace Duke
             {
                 return new InMemoryDatabase(this);
             }
-            else
-            {
-                return new LuceneDatabase(this, overwrite, _dbprops);
-            }
+            return new LuceneDatabase(this, overwrite, _dbprops);
         }
 
         /// <summary>
@@ -194,7 +192,7 @@ namespace Duke
         {
             _proplist = props;
             _properties = new Dictionary<string, Property>(props.Count);
-            foreach (var property in props)
+            foreach (Property property in props)
             {
                 _properties.Add(property.GetName(), property);
             }
@@ -213,7 +211,7 @@ namespace Duke
         public List<Property> GetProperties()
         {
             return _proplist;
-        } 
+        }
 
         /// <summary>
         /// The properties which are used to identify records, rather than
@@ -222,8 +220,8 @@ namespace Duke
         /// <returns></returns>
         public List<Property> GetIdentityProperties()
         {
-            List<Property> ids = new List<Property>();
-            foreach (var property in GetProperties())
+            var ids = new List<Property>();
+            foreach (Property property in GetProperties())
             {
                 if (property.IsIdProperty())
                 {
@@ -232,7 +230,7 @@ namespace Duke
             }
 
             return ids;
-        } 
+        }
 
         /// <summary>
         ///  Returns the property with the given name, or null if there is no
@@ -263,12 +261,12 @@ namespace Duke
         public List<Property> GetLookupProperties()
         {
             return _lookups;
-        } 
+        }
 
         private void FindLookupProperties()
         {
-            List<Property> candidates = new List<Property>();
-            foreach (var property in _properties.Values)
+            var candidates = new List<Property>();
+            foreach (Property property in _properties.Values)
             {
                 if (!property.IsIdProperty() || property.IsIgnoreProperty())
                 {
@@ -276,7 +274,8 @@ namespace Duke
                 }
             }
 
-            candidates.Sort(HighComparator.Compare); //TODO: see if the HighComparator even needs to be a separate class...
+            candidates.Sort(HighComparator.Compare);
+                //TODO: see if the HighComparator even needs to be a separate class...
 
             int last = -1;
             double prob = 0.5;
@@ -291,7 +290,7 @@ namespace Duke
                     // if the probability is zero we ignore the property entirely
                     continue;
 
-                prob = Duke.Utils.Utils.ComputeBayes(prob, prop.GetHighProbability());
+                prob = Utils.Utils.ComputeBayes(prob, prop.GetHighProbability());
                 if (prob >= _threshold)
                 {
                     if (last == -1)
@@ -308,17 +307,13 @@ namespace Duke
                 //                           "), which means no duplicates will ever " +
                 //                           "be found");
                 throw new Exception(String.Format("Maximum possible probability is {0}, which is below threshold ({1}" +
-                                              "), which means no duplicates will ever be found", prob, _threshold));
+                                                  "), which means no duplicates will ever be found", prob, _threshold));
             if (last == -1)
                 _lookups.Clear();
             else
                 _lookups = new List<Property>(candidates.GetRange(last, candidates.Count));
-              
-
         }
 
         #endregion
-
-
     }
 }
