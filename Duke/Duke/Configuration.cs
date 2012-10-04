@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Duke.Comparators;
+using NLog;
 
 namespace Duke
 {
@@ -10,6 +11,9 @@ namespace Duke
     public class Configuration
     {
         #region Private member variables
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
 
         // there are two modes: deduplication and record linkage. in
         // deduplication mode all sources are in 'datasources'. in record
@@ -34,6 +38,7 @@ namespace Duke
 
         public Configuration()
         {
+            logger.Debug("Intializing Configuration");
             _datasources = new List<IDataSource>();
             _group1 = new List<IDataSource>();
             _group2 = new List<IDataSource>();
@@ -86,6 +91,7 @@ namespace Duke
         /// <param name="datasource"></param>
         public void AddDataSource(int groupno, IDataSource datasource)
         {
+            logger.Debug("New datasource added for groupno {0}: {1}", groupno, datasource.ToString());
             // the load takes care of validation
             if (groupno == 0)
             {

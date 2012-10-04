@@ -2,7 +2,7 @@
 
 namespace Duke
 {
-    class Column
+    public class Column
     {
         private readonly String _name;
         private readonly String _property;

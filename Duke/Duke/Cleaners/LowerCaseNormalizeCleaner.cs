@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -28,7 +29,7 @@ namespace Duke.Cleaners
         public string Clean(string value)
         {
             if (_stripAccents)
-                value.Normalize(NormalizationForm.FormD);
+                value = value.Normalize(NormalizationForm.FormD);
 
             var tmp = new char[value.Length];
             int pos = 0;
@@ -60,7 +61,9 @@ namespace Duke.Cleaners
                 }
             }
 
-            return tmp.ToString();
+            var result = new string(tmp);
+            return result.Replace(Convert.ToChar(0x0).ToString(CultureInfo.InvariantCulture), ""); // strip null characters from the string
+       
         }
     }
 }

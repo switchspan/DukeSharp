@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NLog;
 
 namespace Duke
 {
@@ -12,6 +13,9 @@ namespace Duke
     public class InMemoryClassDatabase : IEquivalenceClassDatabase
     {
         #region Private member variables
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        
         // Index from record ID to class ID.
         private Dictionary<string, int> _recordix;
         // the actual collection of classes.
@@ -34,15 +38,16 @@ namespace Duke
             return _classix.Count;
         }
 
-        public List<String> GetClasses()
+        public List<List<string>> GetClasses()
         {
-            var klasses = new List<string>();
-            foreach (var klass in _classix.Values)
-            {
-                klasses.Add(klass.ToString());
-            }
+            //var klasses = new List<string>();
+            //foreach (var klass in _classix.Values)
+            //{
+            //    klasses.Add(klass.ToString());
+            //}
 
-            return klasses;
+            //return klasses;
+            return new List<List<string>>();
         }
 
         public List<string> GetClass(string id)
