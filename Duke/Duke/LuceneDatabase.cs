@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Lucene.Net;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -28,13 +29,18 @@ namespace Duke
         // Deichman case:
         //  1 = 40 minutes
         //  4 = 48 minutes
-        //private final static int SEARCH_EXPANSION_FACTOR = 1;
+        private static int SEARCH_EXPANSION_FACTOR = 1;
         private int max_search_hits;
         private float min_relevance;
         #endregion
 
         #region Constructors
-
+        public LuceneDatabase(Configuration config, bool overwrite, DatabaseProperties dbprops)
+        {
+            _config = config;
+            _analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29);
+          
+        }
         #endregion
 
         #region Member methods
