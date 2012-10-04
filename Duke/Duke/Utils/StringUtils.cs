@@ -64,37 +64,40 @@ namespace Duke.Utils
         /// Splits the specified string.
         /// </summary>
         /// <param name="str">The string to split.</param>
+        /// <param name="charToSplitOn">The char to split on.</param>
         /// <returns></returns>
-        public static String[] Split(String str)
+        public static String[] Split(String str, char charToSplitOn = ' ')
         {
-            var tokens = new String[(str.Length / 2) + 1];
-            int start = 0;
-            int tcount = 0;
-            bool prevws = false;
-            int ix;
-            for (ix = 0; ix < str.Length; ix++)
-            {
-                if (str[ix] == ' ')
-                {
-                    if (!prevws && ix > 0)
-                        tokens[tcount++] = str.Substring(start, ix);
-                    prevws = true;
-                    start = ix + 1;
-                }
-                else
-                {
-                    prevws = false;
-                }
-            }
+            //var tokens = new String[(str.Length / 2) + 1];
+            //int start = 0;
+            //int tcount = 0;
+            //bool prevws = false;
+            //int ix;
+            //for (ix = 0; ix < str.Length; ix++)
+            //{
+            //    if (str[ix] == ' ')
+            //    {
+            //        if (!prevws && ix > 0)
+            //            tokens[tcount++] = str.Substring(start, ix);
+            //        prevws = true;
+            //        start = ix + 1;
+            //    }
+            //    else
+            //    {
+            //        prevws = false;
+            //    }
+            //}
 
-            if (!prevws && start != ix)
-                tokens[tcount++] = str.Substring(start);
+            //if (!prevws && start != ix)
+            //    tokens[tcount++] = str.Substring(start);
 
-            var tmp = new String[tcount];
-            for (ix = 0; ix < tcount; ix++)
-                tmp[ix] = tokens[ix];
+            //var tmp = new String[tcount];
+            //for (ix = 0; ix < tcount; ix++)
+            //    tmp[ix] = tokens[ix];
 
-            return tmp;
+            //return tmp;
+
+            return str.Split(charToSplitOn);
         }
 
         /// <summary>

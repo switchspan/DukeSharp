@@ -32,5 +32,24 @@ namespace Duke.Test
             Console.WriteLine(String.Format("LastnameCommaFirst result = {0}", actual));
             Assert.AreEqual("john smith", actual);
         }
+
+        [Test]
+        public void Clean_AbbreviatedName_AddsSpacesToInitials()
+        {
+            var valueToTest = "J.R. Ackerley";
+            var actual = cleaner.Clean(valueToTest);
+            Console.WriteLine(String.Format("LastnameCommaFirst result = {0}", actual));
+            Assert.AreEqual("j. r. ackerley", actual); 
+        }
+
+        [Test]
+        public void Clean_AbreviatedNameThreeLetters_AddsSpacesToInitials()
+        {
+            var valueToTest = "J.R.R. Tolkien";
+            var actual = cleaner.Clean(valueToTest);
+            Console.WriteLine(String.Format("LastnameCommaFirst result = {0}", actual));
+            Assert.AreEqual("j. r. r. tolkien", actual); 
+            
+        }
     }
 }

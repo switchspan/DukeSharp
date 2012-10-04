@@ -32,5 +32,15 @@ namespace Duke.Test
             Console.WriteLine(String.Format("KnownNickname result = {0}", actual));
             Assert.AreEqual("albert jones", actual);
         }
+
+        [Test]
+        public void Clean_UnknownNickname_ReturnsNickname()
+        {
+            var valueToTest = "Pookie Johnson";
+            var actual = cleaner.Clean(valueToTest);
+            Console.WriteLine(String.Format("KnownNickname result = {0}", actual));
+            Assert.AreEqual("pookie johnson", actual);
+            
+        }
     }
 }
