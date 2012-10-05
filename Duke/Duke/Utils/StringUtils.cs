@@ -1,13 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Duke.Utils
 {
     public class StringUtils
     {
-
+        /// <summary>
+        /// Replaces any of.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="chars">The chars.</param>
+        /// <param name="replacement">The replacement.</param>
+        /// <returns></returns>
         public static String ReplaceAnyOf(String value, String chars, char replacement)
         {
             var tmp = new char[value.Length];
@@ -21,10 +25,12 @@ namespace Duke.Utils
                 else
                 {
                     tmp[pos++] = ch;
-                }   
+                }
             }
 
-            return tmp.ToString();
+            Array.Resize(ref tmp, pos);
+
+            return new string(tmp);
         }
 
         /// <summary>
@@ -41,8 +47,8 @@ namespace Duke.Utils
             bool prevws = false;
             for (int ix = 0; ix < tmp.Length; ix++)
             {
-                var ch = value[ix];
-                if (ch != ' ' && ch != '\t' && ch != '\n' && ch != '\r')
+                char ch = value[ix];
+                if (ch != ' ' && ch != '\t' && ch != '\n' && ch != '\r' && ch != '\0')
                 {
                     if (prevws && pos != 0)
                         tmp[pos++] = ' ';
@@ -56,9 +62,13 @@ namespace Duke.Utils
                 }
             }
 
-            return tmp.ToString();
-        }
+            Array.Resize(ref tmp, pos); // resize the array so we get rid of the null characters...
 
+            //var result = new string(tmp).Replace("\0", string.Empty); // remove the null characters.
+            var result = new string(tmp);
+
+            return result;
+        }
 
         /// <summary>
         /// Splits the specified string.
