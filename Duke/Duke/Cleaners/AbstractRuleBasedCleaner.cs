@@ -53,7 +53,7 @@ namespace Duke.Cleaners
         /// <param name="groupno"></param>
         public void Add(String regex, String replacement, int groupno)
         {
-            _transforms.Add(new Transform(regex, replacement, groupno));
+            _transforms.Add(new Transform(regex, replacement));
         }
     }
 }
