@@ -6,22 +6,21 @@ namespace Duke.Comparators
     public class JaccardIndexComparator : IComparator
     {
         #region Private member variables
+
         private IComparator _subcomp;
+
         #endregion
 
         #region Constructors
+
         public JaccardIndexComparator()
         {
             _subcomp = new ExactComparator();
         }
+
         #endregion
 
         #region Member methods
-        public void SetComparator(IComparator comp)
-        {
-            _subcomp = comp;
-        }
-
 
         public bool IsTokenized()
         {
@@ -64,10 +63,13 @@ namespace Duke.Comparators
             }
 
             return intersection/union;
-
         }
-        #endregion
 
-        
+        public void SetComparator(IComparator comp)
+        {
+            _subcomp = comp;
+        }
+
+        #endregion
     }
 }

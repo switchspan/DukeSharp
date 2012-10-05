@@ -40,7 +40,7 @@ namespace Duke.Comparators
             }
 
             // compute all comparisons
-            var matches = new List<Match>(t1.Length * t2.Length);
+            var matches = new List<Match>(t1.Length*t2.Length);
             for (int ix1 = 0; ix1 < t1.Length; ix1++)
             {
                 for (int ix2 = 0; ix2 < t2.Length; ix2++)
@@ -55,7 +55,7 @@ namespace Duke.Comparators
             // now pick the best matches, never allowing the same token to be
             // included twice. we mark a token as used by nulling it in t1|t2.
             double sum = 0.0;
-            foreach (var match in matches)
+            foreach (Match match in matches)
             {
                 if (t1[match.Ix1] != null && t2[match.Ix2] != null)
                 {

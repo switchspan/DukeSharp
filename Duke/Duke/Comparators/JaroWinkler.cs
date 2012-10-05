@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Duke.Comparators
 {
@@ -15,9 +12,10 @@ namespace Duke.Comparators
     public class JaroWinkler : IComparator
     {
         #region Member methods
+
         public bool IsTokenized()
         {
-            return true; // I guess?
+            return false; // I guess?
         }
 
         public double Compare(string v1, string v2)
@@ -48,7 +46,7 @@ namespace Duke.Comparators
             int prevpos = -1;
             for (int ix = 0; ix < s1.Length; ix++)
             {
-                var ch = s1[ix];
+                char ch = s1[ix];
 
                 // now try to find it in s2
                 for (int ix2 = Math.Max(0, ix - maxdist); ix2 < Math.Min(s2.Length, ix + maxdist); ix2++)
@@ -113,7 +111,7 @@ namespace Duke.Comparators
 
             return score;
         }
+
         #endregion
-        
     }
 }

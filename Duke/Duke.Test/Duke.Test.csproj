@@ -55,6 +55,15 @@
     <Compile Include="Comparators\DifferentComparatorTest.cs" />
     <Compile Include="Comparators\ExactComparatorTest.cs" />
     <Compile Include="Comparators\JaccardIndexComparatorTest.cs" />
+    <Compile Include="Comparators\JaroWinklerTest.cs" />
+    <Compile Include="Comparators\JaroWinklerTokenizedTest.cs" />
+    <Compile Include="Comparators\LevenshteinTest.cs" />
+    <Compile Include="Comparators\MatchTest.cs" />
+    <Compile Include="Comparators\MetaphoneComparatorTest.cs" />
+    <Compile Include="Comparators\NumericComparatorTest.cs" />
+    <Compile Include="Comparators\PersonNameComparatorTest.cs" />
+    <Compile Include="Comparators\SoundexComparatorTest.cs" />
+    <Compile Include="Comparators\WeightedLevenshteinTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\CsvReaderTest.cs" />
     <Compile Include="Utils\StringUtilsTest.cs" />

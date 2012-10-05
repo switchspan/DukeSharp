@@ -259,7 +259,6 @@ namespace Duke.Comparators
             return new string(key, 0, pos);
         }
 
-
         private static Boolean IsVowel(char ch)
         {
             return (ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U' ||

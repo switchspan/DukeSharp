@@ -4,14 +4,6 @@ namespace Duke.Comparators
 {
     public class Levenshtein : IComparator
     {
-        #region Private member variables
-
-        #endregion
-
-        #region Constructors
-
-        #endregion
-
         #region Member methods
 
         public bool IsTokenized()
@@ -61,9 +53,9 @@ namespace Duke.Comparators
             // we use a flat array for better performance. we address it by
             // s1ix + s1len * s2ix. this modification improves performance
             // by about 30%, which is definitely worth the extra complexity.
-            int[] matrix = new int[(s1Len + 1) * (s2.Length + 1)];
+            var matrix = new int[(s1Len + 1)*(s2.Length + 1)];
             for (int col = 0; col <= s2.Length; col++)
-                matrix[col * s1Len] = col;
+                matrix[col*s1Len] = col;
             for (int row = 0; row <= s1Len; row++)
                 matrix[row] = row;
 
@@ -72,17 +64,13 @@ namespace Duke.Comparators
                 char ch1 = s1[ix1];
                 for (int ix2 = 0; ix2 < s2.Length; ix2++)
                 {
-                    int cost;
-                    if (ch1 == s2[ix2])
-                        cost = 0;
-                    else
-                        cost = 1;
+                    int cost = ch1 == s2[ix2] ? 0 : 1;
 
-                    int left = matrix[ix1 + ((ix2 + 1) * s1Len)] + 1;
-                    int above = matrix[ix1 + 1 + (ix2 * s1Len)] + 1;
-                    int aboveleft = matrix[ix1 + (ix2 * s1Len)] + cost;
-                    matrix[ix1 + 1 + ((ix2 + 1) * s1Len)] =
-                      Math.Min(left, Math.Min(above, aboveleft));
+                    int left = matrix[ix1 + ((ix2 + 1)*s1Len)] + 1;
+                    int above = matrix[ix1 + 1 + (ix2*s1Len)] + 1;
+                    int aboveleft = matrix[ix1 + (ix2*s1Len)] + cost;
+                    matrix[ix1 + 1 + ((ix2 + 1)*s1Len)] =
+                        Math.Min(left, Math.Min(above, aboveleft));
                 }
             }
 
@@ -93,8 +81,7 @@ namespace Duke.Comparators
             //   System.out.println();
             // }
 
-            return matrix[s1Len + (s2.Length * s1Len)];
-
+            return matrix[s1Len + (s2.Length*s1Len)];
         }
 
         /// <summary>

@@ -6,15 +6,15 @@ using Duke.Comparators;
 namespace Duke.Test
 {
     [TestFixture]
-    public class JaccardIndexComparatorTest
+    public class SoundexComparatorTest
     {
-        private JaccardIndexComparator comparator;
+        private SoundexComparator comparator;
 
         [SetUp]
         public void Init()
         {
             // Setup code goes here...
-            comparator = new JaccardIndexComparator();
+            comparator = new SoundexComparator();
         }
 
         [TearDown]
@@ -32,7 +32,7 @@ namespace Duke.Test
             double actual = comparator.Compare(val1, val2);
             Console.WriteLine(String.Format("Compare result = {0}", actual));
             Assert.IsInstanceOf<double>(actual);
-            Assert.Less(actual, 1.0);   
+            Assert.Less(actual, 1.0);
         }
 
         [Test]
@@ -47,39 +47,15 @@ namespace Duke.Test
         }
 
         [Test]
-        public void Compare_DifferentWithNumericComparator_ReturnsDouble()
+        public void Compare_TestandText_ReturnsPointNineAsDouble()
         {
-            string val1 = "5011";
-            string val2 = "5012";
-            comparator.SetComparator(new NumericComparator());
+            string val1 = "test";
+            string val2 = "text";
             double actual = comparator.Compare(val1, val2);
             Console.WriteLine(String.Format("Compare result = {0}", actual));
             Assert.IsInstanceOf<double>(actual);
-            Assert.Less(actual, 1.0);
-            
+            Assert.GreaterOrEqual(actual, 0.9);
         }
-
-        [Test]
-        public void Compare_DifferentWithSoundexComparator_ReturnsDouble()
-        {
-            string val1 = "This is a string";
-            string val2 = "This is yet another string";
-            comparator.SetComparator(new SoundexComparator());
-            double actual = comparator.Compare(val1, val2);
-            Console.WriteLine(String.Format("Compare result = {0}", actual));
-            Assert.IsInstanceOf<double>(actual);
-            Assert.Less(actual, 1.0);
-        }
-
-        [Test]
-        public void IsTokenized_Called_ReturnsTrue()
-        {
-            var actual = comparator.IsTokenized();
-            Console.WriteLine(String.Format("IsTokenized result = {0}", actual));
-            Assert.True(actual);
-        }
-
-        
 
     }
 }
