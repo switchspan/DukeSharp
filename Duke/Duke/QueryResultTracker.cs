@@ -24,33 +24,33 @@ namespace Duke
     {
         #region Private member variables
 
-        private Configuration _config;
-        private Analyzer _analyzer;
-        private IndexSearcher _searcher;
-        private int _max_search_hits;
-        private int _min_relevance;
+        private readonly Configuration _config;
+        private readonly Analyzer _analyzer;
+        private readonly IndexSearcher _searcher;
+        private readonly int _maxSearchHits;
+        private readonly float _minRelevance;
 
         private int _limit;
         // Ring buffer containing n last search result sizes, except for
         // searches which found nothing.
-        private int[] _prevsizes;
-        private int sizeix; // position in prevsizes
+        private readonly int[] _prevsizes;
+        private int _sizeix; // position in prevsizes
 
-        private static int SEARCH_EXPANSION_FACTOR = 1;
+        private const int SEARCH_EXPANSION_FACTOR = 1;
 
         #endregion
 
         #region Constructors
 
-        public QueryResultTracker(Configuration config, Analyzer analyzer, IndexSearcher searcher, int max_search_hits, int min_relevance)
+        public QueryResultTracker(Configuration config, Analyzer analyzer, IndexSearcher searcher, int maxSearchHits, float minRelevance)
         {
             _limit = 100;
             _prevsizes = new int[10];
             _config = config;
             _analyzer = analyzer;
-            _max_search_hits = max_search_hits;
+            _maxSearchHits = maxSearchHits;
             _searcher = searcher;
-            _min_relevance = min_relevance;
+            _minRelevance = minRelevance;
         }
 
         #endregion
@@ -92,29 +92,29 @@ namespace Duke
             try
             {
                 ScoreDoc[] hits;
-
-                int thislimit = Math.Min(_limit, _max_search_hits);
+                
+                int thislimit = Math.Min(_limit, _maxSearchHits);
 
                 while (true)
                 {
                     hits = _searcher.Search(query, null, thislimit).ScoreDocs;
-                    if (hits.Length < thislimit || thislimit == _max_search_hits)
+                    if (hits.Length < thislimit || thislimit == _maxSearchHits)
                         break;
                     thislimit = thislimit * 5;
                 }
 
-                matches = new List<IRecord>(Math.Min(hits.Length, _max_search_hits));
-                for (int ix = 0; ix < hits.Length && hits[ix].Score >= _min_relevance; ix++)
+                matches = new List<IRecord>(Math.Min(hits.Length, _maxSearchHits));
+                for (int ix = 0; ix < hits.Length && hits[ix].Score >= _minRelevance; ix++)
                 {
                     matches.Add(new DocumentRecord(hits[ix].Doc, _searcher.Doc(hits[ix].Doc)));
                 }
 
                 if (hits.Length > 0)
                 {
-                    _prevsizes[sizeix++] = matches.Count;
-                    if (sizeix == _prevsizes.Length)
+                    _prevsizes[_sizeix++] = matches.Count;
+                    if (_sizeix == _prevsizes.Length)
                     {
-                        sizeix = 0;
+                        _sizeix = 0;
                         _limit = Math.Max((int)(Average() * SEARCH_EXPANSION_FACTOR), _limit);
                     }
                 }
