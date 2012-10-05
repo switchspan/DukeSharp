@@ -13,10 +13,20 @@ namespace Duke.Cleaners
         #endregion
 
         #region Constructors
-
-        public RegexpCleaner()
+        //TODO: Check to see if we need to have an alternate for patterns with no grouping (i.e. without '( )' in the string.
+        public RegexpCleaner() : this("", 1)
         {
-            _groupno = 1; //default
+        }
+
+
+        public RegexpCleaner(string regexPattern) : this(regexPattern, 1)
+        {
+        }
+
+        public RegexpCleaner(string regexPattern, int groupno)
+        {
+            _pattern = new Regex(regexPattern, RegexOptions.Compiled);
+            _groupno = groupno;
         }
 
         #endregion
@@ -28,13 +38,14 @@ namespace Duke.Cleaners
             if (String.IsNullOrEmpty(value))
                 return null;
 
-            _pattern = new Regex(value);
-            Match matcher = _pattern.Match(value);
+            Match match = _pattern.Match(value);
 
-            if (!matcher.Success)
-                return null;
+            if (match.Success)
+            {
+                return match.Groups[_groupno].Value;
+            }
 
-            return matcher.Groups[_groupno].ToString();
+            return null;
         }
 
         public void SetRegExp(String regexp)
