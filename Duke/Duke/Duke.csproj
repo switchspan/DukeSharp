@@ -84,9 +84,11 @@
     <Compile Include="IDatabase.cs" />
     <Compile Include="IDataSource.cs" />
     <Compile Include="IEquivalenceClassDatabase.cs" />
+    <Compile Include="ILinkDatabase.cs" />
     <Compile Include="InMemoryClassDatabase.cs" />
     <Compile Include="InMemoryDatabase.cs" />
     <Compile Include="IRecord.cs" />
+    <Compile Include="Link.cs" />
     <Compile Include="LuceneDatabase.cs" />
     <Compile Include="Matchers\AbstractMatchListener.cs" />
     <Compile Include="Matchers\IMatchListener.cs" />

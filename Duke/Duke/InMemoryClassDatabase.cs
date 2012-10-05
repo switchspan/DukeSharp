@@ -13,7 +13,7 @@ namespace Duke
     {
         #region Private member variables
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         // Index from record ID to class ID.
         // the actual collection of classes.
@@ -29,6 +29,7 @@ namespace Duke
         {
             _recordix = new Dictionary<string, int>();
             _classix = new Dictionary<int, List<string>>();
+            _nextid = 0;
         }
 
         #endregion
@@ -65,7 +66,7 @@ namespace Duke
             if (!hasId1 && !hasId2)
             {
                 // need to make a new class
-                Int32 cid = _nextid;
+                Int32 cid = _nextid++;
                 var klass = new List<string> {id1, id2};
                 _classix.Add(cid, klass);
                 _recordix.Add(id1, cid);
