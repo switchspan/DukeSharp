@@ -28,8 +28,8 @@ namespace Duke.Test
         [Test]
         public void Clean_SelectingAlphaCharacters_ReturnsAlphaCharacters()
         {
-            string valueToClean = "asdfCD324asdf11";
-            string regexString = @"([a-zA-Z]+)";
+            const string valueToClean = "asdfCD324asdf11";
+            const string regexString = @"([a-zA-Z]+)";
             var cleaner = new RegexpCleaner(regexString);
             string actual = cleaner.Clean(valueToClean);
             Console.WriteLine(String.Format("Clean result = {0}", actual));
@@ -39,8 +39,8 @@ namespace Duke.Test
         [Test]
         public void Clean_SelectingDigitsOfSecondGroup_ReturnsSecondGroup()
         {
-            string valueToClean = "123-4567";
-            string regexString = @"(\d{3})-(\d{4})";
+            const string valueToClean = "123-4567";
+            const string regexString = @"(\d{3})-(\d{4})";
             var cleaner = new RegexpCleaner(regexString);
             cleaner.SetGroup(2);
             string actual = cleaner.Clean(valueToClean);
@@ -51,8 +51,8 @@ namespace Duke.Test
         [Test]
         public void Clean_SelectingDigits_OnlyReturnsDigits()
         {
-            string valueToClean = "asdfcd324asdf11";
-            string regexString = @"(\d+)";
+            const string valueToClean = "asdfcd324asdf11";
+            const string regexString = @"(\d+)";
             var cleaner = new RegexpCleaner(regexString);
             string actual = cleaner.Clean(valueToClean);
             Console.WriteLine(String.Format("Clean result = {0}", actual));

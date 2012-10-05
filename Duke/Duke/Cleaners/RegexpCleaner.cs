@@ -13,11 +13,11 @@ namespace Duke.Cleaners
         #endregion
 
         #region Constructors
+
         //TODO: Check to see if we need to have an alternate for patterns with no grouping (i.e. without '( )' in the string.
         public RegexpCleaner() : this("", 1)
         {
         }
-
 
         public RegexpCleaner(string regexPattern) : this(regexPattern, 1)
         {

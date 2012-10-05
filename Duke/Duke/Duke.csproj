@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Lucene.Net, Version=2.9.4.2, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL" />
+    <Reference Include="LumenWorks.Framework.IO, Version=3.8.0.0, Culture=neutral, PublicKeyToken=5ad3ea2f85776344, processorArchitecture=MSIL" />
     <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>lib\nlog\NLog.dll</HintPath>
     </Reference>
@@ -112,6 +113,9 @@
   <ItemGroup>
     <Content Include="lib\lucene_net\Lucene.Net.dll" />
     <Content Include="lib\lucene_net\version.txt" />
+    <Content Include="lib\lumenworks\LumenWorks.Framework.IO.dll" />
+    <Content Include="lib\lumenworks\LumenWorks.Framework.IO.XML" />
+    <Content Include="lib\lumenworks\version.txt" />
     <Content Include="name-mappings.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

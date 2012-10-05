@@ -1,123 +1,43 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace Duke.Utils
 {
     public class CsvReader
     {
-        private readonly char[] _buf;
+        #region Private member variables
+
+        private readonly LumenWorks.Framework.IO.Csv.CsvReader _reader;
         private readonly StreamReader _sr;
-        private int _len;
-        private int _pos; // where we are in the buffer
-        private readonly string[] _tmp;
+
+        #endregion
+
+        #region Constructors
 
         public CsvReader(StreamReader sr)
         {
-            _buf = new char[65356];
-            _pos = 0;
-            _len = sr.Read(_buf, 0, _buf.Length);
-            _tmp = new string[1000];
             _sr = sr;
+            _reader = new LumenWorks.Framework.IO.Csv.CsvReader(_sr, false);
         }
 
-        // this is used for testing!
-        public CsvReader(StreamReader sr, int buflen)
-        {
-            _buf = new char[buflen];
-            _pos = 0;
-            _len = sr.Read(_buf, 0, _buf.Length);
-            _tmp = new string[1000];
-            _sr = sr;
-        }
+        #endregion
+
+        #region Member methods
 
         public string[] Next()
         {
-            if (_len == -1 || _pos >= _len)
-                return null;
-
-            int colno = 0;
-            int rowstart = _pos; // used for rebuffering at end
-            int prev = _pos - 1;
-            bool escapedQuote = false; //did we find an escaped quote?
-            while (_pos < _len)
+            if (_reader.ReadNextRecord())
             {
-                bool startquote = false;
-                if (_buf[_pos] == '\"')
+                int fieldCount = _reader.FieldCount;
+                var row = new string[fieldCount];
+
+                for (int i = 0; i < fieldCount; i++)
                 {
-                    startquote = true;
-                    prev++;
-                    _pos++;
+                    row[i] = _reader[i];
                 }
 
-                // scan forward, looking for the end of the string
-                while(true)
-                {
-                    while(_pos < _len &&
-                        (startquote || _buf[_pos] != ',') &&
-                        (startquote || (_buf[_pos] != '\n' && _buf[_pos] != '\r')) &&
-                        !(startquote && _buf[_pos] == '\"'))
-                    _pos++;
-
-                    if (_pos + 1 >= _len ||
-                        (!(_buf[_pos] == '\"' && _buf[_pos + 1] != '\"'))) 
-                        break; // we found the end of this value, so stop
-                    
-                    // found a "". carry on
-                    escapedQuote = true;
-                    _pos += 2; // step to the character after next
-                }
-
-                if (escapedQuote)
-                    _tmp[colno++] = Unescape(new string(_buf, prev + 1, _pos - prev - 1));
-                else
-                {
-                    _tmp[colno++] = new string(_buf, prev + 1, _pos - prev - 1);
-                }
-
-                if (startquote)
-                    _pos++; // step over the '"'
-                prev = _pos;
-
-                if (_pos >= _len)
-                    break; // jump out of the loop to rebuffer and try again
-
-                if (_buf[_pos] == '\r' || _buf[_pos] == '\n')
-                {
-                    _pos++; // step over the \r or \n
-                    if (_pos >= _len)
-                        break; // jump out of the loop to rebuffer and try again
-                    if (_buf[_pos] == '\n')
-                        _pos++; // step over this, too
-                    break; // we're done
-                }
-
-                _pos++;
+                return row;
             }
-
-            if (_pos >= _len)
-            {
-                // this means we've exhausted the buffer. that again means we've
-                // read the entire stream, or we need to fill up the buffer.
-                Array.Copy(_buf, rowstart, _buf, 0, _len - rowstart);
-                _len = _len - rowstart;
-                int read = _sr.Read(_buf, _len, _buf.Length - _len);
-                if (read != -1)
-                {
-                    _len += read;
-                    _pos = 0;
-                    return Next();
-                }
-                
-                _len = -1;
-            } 
-
-            var row = new string[colno];
-            for (int ix = 0; ix < colno; ix++)
-            {
-                row[ix] = _tmp[ix];
-            }
-
-            return row;
+            return null;
         }
 
 
@@ -126,9 +46,6 @@ namespace Duke.Utils
             _sr.Close();
         }
 
-        private string Unescape(string val)
-        {
-            return val.Replace("\"\"", "\"");
-        }
+        #endregion
     }
 }

@@ -44,15 +44,20 @@
     <Compile Include="Cleaners\DigitsOnlyCleanerTest.cs" />
     <Compile Include="Cleaners\FamilyCommaGivenCleanerTest.cs" />
     <Compile Include="Cleaners\LowerCaseNormalizeCleanerTest.cs" />
+    <Compile Include="Cleaners\MappingFileCleanerTest.cs" />
     <Compile Include="Cleaners\NoCleaningCleanerTest.cs" />
     <Compile Include="Cleaners\PersonNameCleanerTest.cs" />
     <Compile Include="Cleaners\RegexpCleanerTest.cs" />
     <Compile Include="ColumnTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\CsvReaderTest.cs" />
     <Compile Include="Utils\StringUtilsTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Cleaners\name-mappings.txt">
+    <Content Include="mapping-cleaner-test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="name-mappings.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="lib\nunit\nunit.framework.dll" />

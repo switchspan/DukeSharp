@@ -11,11 +11,14 @@ namespace Duke.Cleaners
 
         public string Clean(string value)
         {
-            String newvalue = _mapping[value];
-            if (newvalue == null)
+            if (_mapping.ContainsKey(value))
+            {
+                return _mapping[value];
+            }
+            else
+            {
                 return value;
-
-            return newvalue;
+            }
         }
 
         public void SetMappingFile(string filename)

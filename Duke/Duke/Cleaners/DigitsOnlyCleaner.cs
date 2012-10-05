@@ -7,7 +7,7 @@ namespace Duke.Cleaners
     /// </summary>
     public class DigitsOnlyCleaner : ICleaner
     {
-        Regex _pattern = new Regex("[0-9]+", RegexOptions.Compiled);
+        private readonly Regex _pattern = new Regex("[0-9]+", RegexOptions.Compiled);
 
         #region ICleaner Members
 
@@ -24,8 +24,8 @@ namespace Duke.Cleaners
 
             //return tmp.ToString();
 
-            var matches = _pattern.Match(value);
-            return matches.Value.ToString();
+            Match matches = _pattern.Match(value);
+            return matches.Value;
         }
 
         #endregion
