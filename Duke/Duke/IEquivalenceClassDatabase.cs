@@ -11,7 +11,7 @@ namespace Duke
         int GetClassCount();
 
         // Returns an iteractor over all classes in the database.
-        List<List<String>> GetClasses();
+        List<List<string>> GetClasses();
 
         // Get all records linked to the given record (that is, all records
         // in the same equivalence class as the given record).
