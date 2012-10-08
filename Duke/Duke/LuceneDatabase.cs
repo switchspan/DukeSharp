@@ -27,8 +27,8 @@ namespace Duke
         private Directory _directory;
         private IndexWriter _iwriter;
         private IndexSearcher _searcher;
-        private int max_search_hits;
-        private float min_relevance;
+        private int _maxSearchHits;
+        private float _minRelevance;
 
         #endregion
 
@@ -40,8 +40,19 @@ namespace Duke
             _analyzer = new StandardAnalyzer(Version.LUCENE_29);
             _maintracker = new QueryResultTracker(config, _analyzer, _searcher, dbprops.MaxSearchHits,
                                                   dbprops.MinRelevance);
-            max_search_hits = dbprops.MaxSearchHits;
-            min_relevance = dbprops.MinRelevance;
+            _maxSearchHits = dbprops.MaxSearchHits;
+            _minRelevance = dbprops.MinRelevance;
+
+            try
+            {
+                OpenIndexes(overwrite);
+                OpenSearchers();
+            }
+            catch (System.Exception ex)
+            {
+                throw; //TODO: Log this...
+            }
+
         }
 
         #endregion
@@ -50,36 +61,26 @@ namespace Duke
 
         public bool IsInMemory()
         {
-            throw new NotImplementedException();
+            return (_directory.GetType() == typeof (RAMDirectory));
         }
 
         public void Index(IRecord record)
         {
-            Document doc = new Document();
+            var doc = new Document();
 
-            foreach (var propname in record.GetProperties())
+            foreach (string propname in record.GetProperties())
             {
                 Property prop = _config.GetPropertyByName(propname);
                 if (prop == null)
                 {
-                    throw new Exception(String.Format("Record has property {0} for which there is no configuration.", propname));
+                    throw new Exception(String.Format("Record has property {0} for which there is no configuration.",
+                                                      propname));
                 }
 
                 Field.Index ix; //TODO: could cache this. or get it from property
-                if (prop.IsIdProperty())
-                {
-                    ix = Field.Index.NOT_ANALYZED; // so FindRecordById will work
-                }
-                else // if (prop.IsAnalyzedProperty())
-                {
-                    ix = Field.Index.ANALYZED;
-                    // FIXME: it turns out that with the StandardAnalyzer you can't have a
-                    // multi-token value that's not analyzed if you want to find it again...
-                    // else
-                    //   ix = Field.Index.NOT_ANALYZED;
-                }
+                ix = prop.IsIdProperty() ? Field.Index.NOT_ANALYZED : Field.Index.ANALYZED;
 
-                foreach (var v in record.GetValues(propname))
+                foreach (string v in record.GetValues(propname))
                 {
                     if (v.Equals(""))
                         continue; //FIXME: not sure if this is necessary
@@ -88,7 +89,14 @@ namespace Duke
                 }
             }
 
-
+            try
+            {
+                _iwriter.AddDocument(doc);
+            }
+            catch (Exception ex)
+            {
+                throw; //TODO: Log this...
+            }
         }
 
         /// <summary>
@@ -124,9 +132,14 @@ namespace Duke
                     return r;
             }
 
-            return null;
+            return null; // not found
         }
 
+        /// <summary>
+        /// Look up potentially matching records.
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
         public List<IRecord> FindCandidateMatches(IRecord record)
         {
             return _maintracker.Lookup(record);
@@ -151,6 +164,9 @@ namespace Duke
                 throw; //TODO: logging here...
             }
         }
+
+        // ------- INTERNALS
+
 
         private void OpenIndexes(bool overwrite)
         {
