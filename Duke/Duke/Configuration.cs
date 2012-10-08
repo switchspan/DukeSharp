@@ -296,7 +296,7 @@ namespace Duke
                     // if the probability is zero we ignore the property entirely
                     continue;
 
-                prob = Utils.Utils.ComputeBayes(prob, prop.GetHighProbability());
+                prob = Utils.StandardUtils.ComputeBayes(prob, prop.GetHighProbability());
                 if (prob >= _threshold)
                 {
                     if (last == -1)

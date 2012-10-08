@@ -5,10 +5,13 @@ using System.Text;
 
 namespace Duke.Utils
 {
-    public class Utils
+    /// <summary>
+    /// Standard utilities...used to be called 'Utils.cs'
+    /// </summary>
+    public class StandardUtils
     {
         /// <summary>
-        /// Combines two probabilities using Baye's theorem.
+        /// Combines two probabilities using Bayes' theorem.
         /// </summary>
         /// <param name="prob1"></param>
         /// <param name="prob2"></param>
