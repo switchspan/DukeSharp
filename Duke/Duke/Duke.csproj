@@ -79,8 +79,11 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="DatabaseProperties.cs" />
     <Compile Include="Datasources\ColumnarDataSource.cs" />
+    <Compile Include="Datasources\CsvDataSource.cs" />
+    <Compile Include="Datasources\CsvRecordIterator.cs" />
     <Compile Include="Datasources\RecordBuilder.cs" />
     <Compile Include="DocumentRecord.cs" />
+    <Compile Include="DukeException.cs" />
     <Compile Include="ICleaner.cs" />
     <Compile Include="IComparator.cs" />
     <Compile Include="IDatabase.cs" />

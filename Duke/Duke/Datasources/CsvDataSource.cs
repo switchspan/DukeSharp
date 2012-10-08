@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Duke.Utils;
 
 namespace Duke.Datasources
 {
@@ -61,13 +62,21 @@ namespace Duke.Datasources
                     }
                 }
 
-                return new 
+                return new CsvRecordIterator(this, new CsvReader(sr));
+            }
+            catch (FileNotFoundException e)
+            {
+                //throw new DukeConfigException("Couldn't find CSV file '" + file + "'");
+            }
+            catch (Exception ex)
+            {
+                throw; //TODO: Log this...
             }
         }
 
         protected override string GetSourceName()
         {
-            throw new NotImplementedException();
+            return "CSV";
         }
 
         #endregion
