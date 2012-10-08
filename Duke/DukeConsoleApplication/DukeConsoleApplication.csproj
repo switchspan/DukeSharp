@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=1.9.3.19, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -55,10 +56,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="lib\CommandLine\CommandLine.dll" />
-    <Content Include="lib\CommandLine\CommandLine.pdb" />
-    <Content Include="lib\CommandLine\CommandLine.XML" />
-    <Content Include="lib\CommandLine\version.txt" />
+    <Content Include="lib\commandline\CommandLine.dll" />
+    <Content Include="lib\commandline\CommandLine.pdb" />
+    <Content Include="lib\commandline\CommandLine.XML" />
+    <Content Include="lib\commandline\version.txt" />
+    <Content Include="lib\nlog\NLog.dll" />
+    <Content Include="lib\nlog\version.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
