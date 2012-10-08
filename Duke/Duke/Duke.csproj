@@ -78,6 +78,8 @@
     <Compile Include="Cleaners\FamilyCommaGivenCleaner.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DatabaseProperties.cs" />
+    <Compile Include="Datasources\ColumnarDataSource.cs" />
+    <Compile Include="Datasources\RecordBuilder.cs" />
     <Compile Include="DocumentRecord.cs" />
     <Compile Include="ICleaner.cs" />
     <Compile Include="IComparator.cs" />
@@ -108,7 +110,6 @@
     <Compile Include="Utils\StandardUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Datasources\" />
     <Folder Include="Examples\" />
     <Folder Include="lib\nlog\" />
     <Folder Include="Server\" />
