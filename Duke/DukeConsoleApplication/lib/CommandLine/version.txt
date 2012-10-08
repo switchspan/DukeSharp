@@ -1,0 +1,3 @@
+﻿Command Line Parser Library
+version 1.9.3.19-beta
+http://commandline.codeplex.com/
