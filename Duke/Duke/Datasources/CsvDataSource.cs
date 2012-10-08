@@ -66,11 +66,11 @@ namespace Duke.Datasources
             }
             catch (FileNotFoundException e)
             {
-                //throw new DukeConfigException("Couldn't find CSV file '" + file + "'");
+                throw new DukeConfigException(String.Format("Couldn't find CSV file '{0}'", File));
             }
-            catch (Exception ex)
+            catch (IOException e)
             {
-                throw; //TODO: Log this...
+                throw;
             }
         }
 

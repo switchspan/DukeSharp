@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Duke.Utils;
 
 namespace Duke.Datasources
@@ -87,7 +88,7 @@ namespace Duke.Datasources
             {
                 row = _reader.Next();
             }
-            catch (Exception ex)
+            catch (IOException e)
             {
                 throw; //TODO: Log this...
             }

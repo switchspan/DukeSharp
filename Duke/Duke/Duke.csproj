@@ -83,7 +83,10 @@
     <Compile Include="Datasources\CsvRecordIterator.cs" />
     <Compile Include="Datasources\RecordBuilder.cs" />
     <Compile Include="DocumentRecord.cs" />
+    <Compile Include="DukeConfigException.cs" />
     <Compile Include="DukeException.cs" />
+    <Compile Include="Examples\CapitalCleaner.cs" />
+    <Compile Include="Examples\CountryNameCleaner.cs" />
     <Compile Include="ICleaner.cs" />
     <Compile Include="IComparator.cs" />
     <Compile Include="IDatabase.cs" />
@@ -113,7 +116,6 @@
     <Compile Include="Utils\StandardUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Examples\" />
     <Folder Include="lib\nlog\" />
     <Folder Include="Server\" />
   </ItemGroup>
