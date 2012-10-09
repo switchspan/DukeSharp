@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Duke.Comparators;
+using Duke.Utils;
 using NLog;
 
 namespace Duke
@@ -12,7 +13,7 @@ namespace Duke
     {
         #region Private member variables
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
 
         // there are two modes: deduplication and record linkage. in
@@ -25,12 +26,27 @@ namespace Duke
         private readonly List<IDataSource> _group2;
         private List<Property> _lookups; // subset of properties
 
-        private String _path;
-
         private Dictionary<String, Property> _properties;
         private List<Property> _proplist; // duplicate to preserve order
-        private double _threshold;
-        private double _thresholdMaybe;
+
+        #endregion
+
+        #region Member Properties
+
+        /// The probability threshold used to decide whether two records
+        /// represent the same entity. If the probability is higher than this
+        /// value, the two records are considered to represent the same entity.
+        public double Threshold { get; set; }
+
+        /// The probability threshold used to decide whether two records may
+        /// represent the same entity. If the probability is higher than this
+        /// value, the two records are considered possible matches. Can be 0,
+        /// in which case no records are considered possible matches.
+        public double ThresholdMaybe { get; set; }
+
+        /// Returns the path to the Lucene index directory. If null, it means
+        /// the Lucene index is kept in-memory.
+        public string Path { get; set; }
 
         #endregion
 
@@ -108,26 +124,6 @@ namespace Duke
         }
 
         /// <summary>
-        /// Returns the path to the Lucene index directory. If null, it means
-        /// the Lucene index is kept in-memory.
-        /// </summary>
-        /// <returns></returns>
-        public String GetPath()
-        {
-            return _path;
-        }
-
-        /// <summary>
-        /// The path to the Lucene index directory. If null or not set, it
-        /// means the Lucene index is kept in-memory.
-        /// </summary>
-        /// <param name="path"></param>
-        public void SetPath(String path)
-        {
-            _path = path;
-        }
-
-        /// <summary>
         /// FIXME: means we can create multiple ones. not a good idea.
         /// </summary>
         /// <param name="overwrite"></param>
@@ -143,39 +139,6 @@ namespace Duke
         }
 
         /// <summary>
-        /// The probability threshold used to decide whether two records
-        /// represent the same entity. If the probability is higher than this
-        /// value, the two records are considered to represent the same entity.
-        /// </summary>
-        /// <returns></returns>
-        public double GetThreshold()
-        {
-            return _threshold;
-        }
-
-        /// <summary>
-        /// Sets the probability threshold for considering two records
-        /// equivalent.
-        /// </summary>
-        /// <param name="threshold"></param>
-        public void SetThreshold(double threshold)
-        {
-            _threshold = threshold;
-        }
-
-        /// <summary>
-        /// The probability threshold used to decide whether two records may
-        /// represent the same entity. If the probability is higher than this
-        /// value, the two records are considered possible matches. Can be 0,
-        /// in which case no records are considered possible matches.
-        /// </summary>
-        /// <returns></returns>
-        public double GetMaybeThreshold()
-        {
-            return _thresholdMaybe;
-        }
-
-        /// <summary>
         /// Returns whether we are in deduplication mode
         /// </summary>
         /// <returns>true if we are in deduplication mode</returns>
@@ -184,23 +147,13 @@ namespace Duke
             return !(GetDataSources().Count == 0 || GetDataSources() == null);
         }
 
-        /// <summary>
-        /// Sets the probability threshold for considering two records
-        /// possibly equivalent. Does not have to be set.
-        /// </summary>
-        /// <param name="thresholdMaybe"></param>
-        public void SetMaybeThreshold(double thresholdMaybe)
-        {
-            _thresholdMaybe = thresholdMaybe;
-        }
-
         public void SetProperties(List<Property> props)
         {
             _proplist = props;
             _properties = new Dictionary<string, Property>(props.Count);
             foreach (Property property in props)
             {
-                _properties.Add(property.GetName(), property);
+                _properties.Add(property.Name, property);
             }
 
             // analyze properties to find lookup set
@@ -229,7 +182,7 @@ namespace Duke
             var ids = new List<Property>();
             foreach (Property property in GetProperties())
             {
-                if (property.IsIdProperty())
+                if (property.IsIdProperty)
                 {
                     ids.Add(property);
                 }
@@ -274,30 +227,30 @@ namespace Duke
             var candidates = new List<Property>();
             foreach (Property property in _properties.Values)
             {
-                if (!property.IsIdProperty() || property.IsIgnoreProperty())
+                if (!property.IsIdProperty || property.IsIgnoreProperty())
                 {
                     candidates.Add(property);
                 }
             }
 
             candidates.Sort(HighComparator.Compare);
-                //TODO: see if the HighComparator even needs to be a separate class...
+            //TODO: see if the HighComparator even needs to be a separate class...
 
             int last = -1;
             double prob = 0.5;
-            double limit = _thresholdMaybe;
+            double limit = ThresholdMaybe;
             if (limit == 0.0)
-                limit = _threshold;
+                limit = Threshold;
 
             for (int ix = 0; ix < candidates.Count; ix++)
             {
                 Property prop = candidates[ix];
-                if (prop.GetHighProbability() == 0.0)
+                if (prop.HighProbability == 0.0)
                     // if the probability is zero we ignore the property entirely
                     continue;
 
-                prob = Utils.StandardUtils.ComputeBayes(prob, prop.GetHighProbability());
-                if (prob >= _threshold)
+                prob = StandardUtils.ComputeBayes(prob, prop.HighProbability);
+                if (prob >= Threshold)
                 {
                     if (last == -1)
                         last = ix;
@@ -307,13 +260,13 @@ namespace Duke
                     last = ix;
             }
 
-            if (prob < _threshold)
+            if (prob < Threshold)
                 //throw new DukeConfigException("Maximum possible probability is " + prob +
                 //                           ", which is below threshold (" + threshold +
                 //                           "), which means no duplicates will ever " +
                 //                           "be found");
                 throw new Exception(String.Format("Maximum possible probability is {0}, which is below threshold ({1}" +
-                                                  "), which means no duplicates will ever be found", prob, _threshold));
+                                                  "), which means no duplicates will ever be found", prob, Threshold));
             if (last == -1)
                 _lookups.Clear();
             else

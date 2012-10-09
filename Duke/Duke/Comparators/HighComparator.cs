@@ -19,11 +19,11 @@
 
         public static int Compare(Property p1, Property p2)
         {
-            if (p1.GetHighProbability() < p2.GetHighProbability())
+            if (p1.HighProbability < p2.HighProbability)
             {
                 return -1;
             }
-            if (p1.GetHighProbability() == p2.GetHighProbability())
+            if (p1.HighProbability == p2.HighProbability)
             {
                 return 0;
             }

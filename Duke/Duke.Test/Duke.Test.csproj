@@ -64,6 +64,7 @@
     <Compile Include="Comparators\PersonNameComparatorTest.cs" />
     <Compile Include="Comparators\SoundexComparatorTest.cs" />
     <Compile Include="Comparators\WeightedLevenshteinTest.cs" />
+    <Compile Include="ConfigLoaderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\CsvReaderTest.cs" />
     <Compile Include="Utils\DefaultRecordIterator.cs" />
@@ -79,6 +80,9 @@
     </Content>
     <Content Include="lib\nunit\nunit.framework.dll" />
     <Content Include="lib\nunit\version.txt" />
+    <Content Include="test_config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Duke\Duke.csproj">

@@ -78,7 +78,7 @@ namespace Duke
                 }
 
                 Field.Index ix; //TODO: could cache this. or get it from property
-                ix = prop.IsIdProperty() ? Field.Index.NOT_ANALYZED : Field.Index.ANALYZED;
+                ix = prop.IsIdProperty ? Field.Index.NOT_ANALYZED : Field.Index.ANALYZED;
 
                 foreach (string v in record.GetValues(propname))
                 {
@@ -128,7 +128,7 @@ namespace Duke
             Property idprop = _config.GetIdentityProperties()[0];
             foreach (IRecord r in _maintracker.Lookup(idprop, id))
             {
-                if (r.GetValue(idprop.GetName()) == id)
+                if (r.GetValue(idprop.Name) == id)
                     return r;
             }
 
@@ -174,13 +174,13 @@ namespace Duke
             {
                 try
                 {
-                    if (_config.GetPath() == null)
+                    if (_config.Path == null)
                     {
                         _directory = new RAMDirectory();
                     }
                     else
                     {
-                        _directory = FSDirectory.Open(new DirectoryInfo(_config.GetPath()));
+                        _directory = FSDirectory.Open(new DirectoryInfo(_config.Path));
                     }
 
                     _iwriter = new IndexWriter(_directory, _analyzer, overwrite, new IndexWriter.MaxFieldLength(25000));

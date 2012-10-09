@@ -44,7 +44,7 @@ namespace Duke
         {
             foreach (Property p in _config.GetIdentityProperties())
             {
-                List<String> values = record.GetValues(p.GetName());
+                List<String> values = record.GetValues(p.Name);
                 if (values == null)
                     continue;
 

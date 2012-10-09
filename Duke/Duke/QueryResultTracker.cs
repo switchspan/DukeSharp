@@ -63,12 +63,12 @@ namespace Duke
             var query = new BooleanQuery();
             foreach (var lookupProperty in _config.GetLookupProperties())
             {
-                var values = record.GetValues(lookupProperty.GetName());
+                var values = record.GetValues(lookupProperty.Name);
                 if (values == null)
                     continue;
                 foreach (var value in values)
                 {
-                    ParseTokens(query, lookupProperty.GetName(), value);
+                    ParseTokens(query, lookupProperty.Name, value);
                 }
             }
 
@@ -82,7 +82,7 @@ namespace Duke
             if (v.Length == 0) 
                 return new List<IRecord>();
 
-            var query = ParseTokens(property.GetName(), v);
+            var query = ParseTokens(property.Name, v);
             return DoQuery(query);
         } 
 
