@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using CommandLine;
 using CommandLine.Text;
+using Duke;
 using NLog;
 
 namespace DukeConsoleApplication
@@ -44,7 +45,14 @@ namespace DukeConsoleApplication
                     DisplayErrorMessageAndExit(errMessage, ExitCode.InvalidConfigFileXml);
                 }
 
+                // get the intial options
+                int count = 0;
+
+                // load the configuration
+                Configuration config;
+
                 
+
             }
             else
             {

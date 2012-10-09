@@ -33,7 +33,7 @@ namespace DukeConsoleApplication
         [Option("n", "noreindex", DefaultValue = false, HelpText = "Reuse existing Lucene index.")]
         public bool IsNoReindex { get; set; }
 
-        [Option("b", "batchsize", DefaultValue = 1, HelpText = "Set size of Lucene indexing batches.")]
+        [Option("b", "batchsize", DefaultValue = 40000, HelpText = "Set size of Lucene indexing batches.")]
         public int BatchSize { get; set; }
 
         [HelpOption(HelpText = "Display this help screen.")]
