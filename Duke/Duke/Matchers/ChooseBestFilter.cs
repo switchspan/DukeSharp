@@ -30,7 +30,19 @@ namespace Duke.Matchers
 
         public new void MatchesPerhaps(IRecord r1, IRecord r2, double confidence)
         {
-            
+            Matches(r1, r2, confidence);
+        }
+
+        public new void EndRecord()
+        {
+            //if (max > config.getThreshold())
+            //    registerMatch(current, best, max);
+            //else if (config.getMaybeThreshold() != 0.0 &&
+            //         max > config.getMaybeThreshold())
+            //    registerMatchPerhaps(current, best, max);
+            //else
+            //    registerNoMatchFor(current);
+            //registerEndRecord();
         }
     }
 }

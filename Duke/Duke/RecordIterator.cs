@@ -11,8 +11,6 @@ namespace Duke
     /// </summary>
     public abstract class RecordIterator : IEnumerable<IRecord>
     {
-
-
         public IEnumerator<IRecord> GetEnumerator()
         {
             throw new NotImplementedException();

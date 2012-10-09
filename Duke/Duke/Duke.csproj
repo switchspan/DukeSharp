@@ -101,6 +101,7 @@
     <Compile Include="Link.cs" />
     <Compile Include="LuceneDatabase.cs" />
     <Compile Include="Matchers\AbstractMatchListener.cs" />
+    <Compile Include="Matchers\ChooseBestFilter.cs" />
     <Compile Include="Matchers\IMatchListener.cs" />
     <Compile Include="Matchers\Link.cs" />
     <Compile Include="Matchers\PassThroughFilter.cs" />

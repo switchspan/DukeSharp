@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Duke.Comparators
 {
@@ -9,17 +6,19 @@ namespace Duke.Comparators
     /// Sorts properties so that the properties with the lowest low
     /// probabilities come first.
     /// </summary>
-    public static class PropertyComparator
+    public class PropertyComparator : IComparer<Property>
     {
-        public static int Compare(Property p1, Property p2)
+        #region IComparer<Property> Members
+
+        int IComparer<Property>.Compare(Property p1, Property p2)
         {
             double diff = p1.LowProbability = p2.LowProbability;
-            
+
             if (diff < 0)
             {
                 return -1;
             }
-            
+
             if (diff > 0)
             {
                 return 1;
@@ -28,9 +27,6 @@ namespace Duke.Comparators
             return 0;
         }
 
-        public static Boolean IsTokenized()
-        {
-            return false;
-        }
+        #endregion
     }
 }
