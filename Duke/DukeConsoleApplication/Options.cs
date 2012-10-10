@@ -44,7 +44,7 @@ namespace DukeConsoleApplication
             var help = new HelpText
                            {
                                Heading = new HeadingInfo("Duke Console Application", "1.0"),
-                               Copyright = new CopyrightInfo("Require LLC", 2012),
+                               Copyright = new CopyrightInfo("Ken Taylor", 2012),
                                AdditionalNewLineAfterOption = false,
                                AddDashesToOption = true
                            };
