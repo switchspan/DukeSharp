@@ -6,6 +6,7 @@ using System.Xml;
 using CommandLine;
 using CommandLine.Text;
 using Duke;
+using Duke.Matchers;
 using NLog;
 
 namespace DukeConsoleApplication
@@ -49,9 +50,16 @@ namespace DukeConsoleApplication
                 int count = 0;
 
                 // load the configuration
-                Configuration config;
-
+                var config = ConfigLoader.Load(options.ConfigFile);
+                // spin up the Processor
+                var proc = new Processor(config);
+                proc.AddMatchListener(new PrintMatchListener(true, true, true, false));
                 
+                // deduplicate the items
+                proc.Deduplicate();
+
+                // close out the processor
+                proc.Close();
 
             }
             else

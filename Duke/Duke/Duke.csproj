@@ -82,7 +82,10 @@
     <Compile Include="Datasources\ColumnarDataSource.cs" />
     <Compile Include="Datasources\CsvDataSource.cs" />
     <Compile Include="Datasources\CsvRecordIterator.cs" />
+    <Compile Include="Datasources\IncrementalRecordIterator.cs" />
+    <Compile Include="Datasources\NTriplesDataSource.cs" />
     <Compile Include="Datasources\RecordBuilder.cs" />
+    <Compile Include="Datasources\RecordHandler.cs" />
     <Compile Include="DocumentRecord.cs" />
     <Compile Include="DukeConfigException.cs" />
     <Compile Include="DukeException.cs" />
@@ -115,6 +118,7 @@
     <Compile Include="RecordImpl.cs" />
     <Compile Include="RecordIterator.cs" />
     <Compile Include="Utils\CsvReader.cs" />
+    <Compile Include="Utils\NTriplesParser.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Cleaners\Transform.cs" />
     <Compile Include="Utils\StandardUtils.cs" />
