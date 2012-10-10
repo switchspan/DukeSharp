@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Duke.Comparators;
 using Duke.Matchers;
 using Duke.Utils;
 using Lucene.Net.Index;
+using NLog;
 
 namespace Duke
 {
@@ -15,15 +17,17 @@ namespace Duke
     {
         #region Private member variables
 
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         private static int _defaultBatchSize = 40000;
         private readonly double[] _accprob;
+        private readonly IMatchListener _choosebest;
         private readonly Configuration _config;
         private readonly List<IMatchListener> _listeners;
+        private readonly IMatchListener _passthrough;
 
         private readonly List<Property> _proporder;
-        private IMatchListener _choosebest;
         protected IDatabase _database;
-        private IMatchListener _passthrough;
 
         #endregion
 
@@ -160,7 +164,7 @@ namespace Duke
             try
             {
                 // prepare
-                foreach (var record in records)
+                foreach (IRecord record in records)
                 {
                     _database.Index(record);
                 }
@@ -168,12 +172,12 @@ namespace Duke
                 _database.Commit();
 
                 // then match
-                foreach (var record in records)
+                foreach (IRecord record in records)
                 {
                     //Match(record, _passthrough);
                 }
 
-                foreach (var matchListener in _listeners)
+                foreach (IMatchListener matchListener in _listeners)
                 {
                     matchListener.BatchDone();
                 }
@@ -190,7 +194,162 @@ namespace Duke
 
         public void Link()
         {
-            //TODO: Finish here...
+            Link(_config.GetDataSources(1), _config.GetDataSources(2), _defaultBatchSize);
+        }
+
+        public void Link(List<IDataSource> sources1, List<IDataSource> sources2, int batch_size)
+        {
+            // first, index up group 1
+            //Index(sources1, batch_size);
+
+            // second, traverse group 2 to look for matches with group 1
+            //LinkRecords(sources2, _choosebest);
+        }
+
+        public void LinkRecords(List<IDataSource> sources)
+        {
+            LinkRecords(sources, _passthrough);
+        }
+
+        public void LinkRecords(List<IDataSource> sources, bool matchall)
+        {
+            LinkRecords(sources, matchall ? _passthrough : _choosebest);
+        }
+
+        private void LinkRecords(List<IDataSource> sources, IMatchListener filter)
+        {
+            foreach (IDataSource dataSource in sources)
+            {
+                dataSource.SetLogger();
+
+                IEnumerator<IRecord> it = dataSource.GetRecords().GetEnumerator();
+
+                while (it.MoveNext())
+                {
+                    IRecord record = it.Current;
+                    //Match(record, filter);
+                }
+            }
+
+            foreach (IMatchListener matchListener in _listeners)
+            {
+                matchListener.EndProcessing();
+            }
+        }
+
+        /// <summary>
+        /// Index all new records from the given data sources. 
+        /// This method does <em>not</em> do any matching. @since 0.4
+        /// </summary>
+        /// <param name="sources"></param>
+        /// <param name="batch_size"></param>
+        public void Index(List<IDataSource> sources, int batch_size)
+        {
+            int count = 0;
+
+            foreach (IDataSource dataSource in sources)
+            {
+                //dataSource.SetLogger();
+
+                IEnumerator<IRecord> it2 = dataSource.GetRecords().GetEnumerator();
+                while (it2.MoveNext())
+                {
+                    IRecord record = it2.Current;
+                    _database.Index(record);
+                    count++;
+                    if (count%batch_size == 0)
+                    {
+                        foreach (IMatchListener matchListener in _listeners)
+                        {
+                            matchListener.BatchReady(batch_size);
+                        }
+                    }
+                }
+            }
+
+            if (count%batch_size == 0)
+            {
+                foreach (IMatchListener matchListener in _listeners)
+                {
+                    matchListener.BatchReady(count%batch_size);
+                }
+            }
+
+            _database.Commit();
+        }
+
+        private void Match(IRecord record, IMatchListener filter)
+        {
+            List<IRecord> candidates = _database.FindCandidateMatches(record);
+            logger.Debug("Match record {0} found {0} candidates", PrintMatchListener.RecordToString(record),
+                         candidates.Count);
+            CompareCandidates(record, candidates, filter);
+        }
+
+        protected void CompareCandidates(IRecord record, List<IRecord> candidates, IMatchListener filter)
+        {
+            filter.StartRecord(record);
+            foreach (IRecord candidate in candidates)
+            {
+                if (IsSameAs(record, candidate))
+                    continue;
+
+                double prob = Compare(record, candidate);
+                if (prob > _config.Threshold)
+                {
+                    filter.Matches(record, candidate, prob);
+                }
+                else if ((_config.ThresholdMaybe != 0.0) && (prob > _config.ThresholdMaybe))
+                {
+                    filter.MatchesPerhaps(record, candidate, prob);
+                }
+            }
+
+            filter.EndRecord();
+        }
+
+        public double Compare(IRecord r1, IRecord r2)
+        {
+            double prob = 0.5;
+            foreach (string propname in r1.GetProperties())
+            {
+                Property prop = _config.GetPropertyByName(propname);
+                if (prop.IsIdProperty || prop.IsIgnoreProperty())
+                    continue;
+
+                List<string> vs1 = r1.GetValues(propname);
+                List<string> vs2 = r2.GetValues(propname);
+                if ((vs1.Count == 0) || (vs2.Count == 0))
+                    continue; // no values to compare, so skip
+
+                double high = 0.0;
+                foreach (string v1 in vs1)
+                {
+                    if (v1.Equals("")) //TODO: These values shouldn't be here at all.
+                        continue;
+
+                    foreach (string v2 in vs2)
+                    {
+                        if (v2.Equals("")) //TODO: These values shouldn't be here at all.
+                            continue;
+
+                        try
+                        {
+                            double p = prop.Compare(v1, v2);
+                            high = Math.Max(high, p);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new DukeException(String.Format("Comparison of values {0} and {1} failed. {2}", v1, v2,
+                                                                  e.Message));
+                        }
+                    }
+                }
+
+                prob = StandardUtils.ComputeBayes(prob, high);
+            }
+
+            return prob;
         }
 
         // Commits all state to disk and frees up resources
