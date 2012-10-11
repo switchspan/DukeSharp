@@ -22,63 +22,44 @@ namespace Duke
             var properties = new List<Property>();
 
             // Get the appropriate nodes using Linq to XML
-            var xml = XElement.Load(file);
+            XElement xml = XElement.Load(file);
 
             // Get the threshold
-            var threshold = xml.Elements("schema").Descendants("threshold").Select(x => double.Parse(x.Value)).First();
+            double threshold =
+                xml.Elements("schema").Descendants("threshold").Select(x => double.Parse(x.Value)).First();
             cfg.Threshold = threshold;
 
             // Get all of the properties
-            var xmlProperties = from s in xml.Elements("schema")
-                             from p in s.Descendants("property")
-                             select p;
+            IEnumerable<XElement> xmlProperties = from s in xml.Elements("schema")
+                                                  from p in s.Descendants("property")
+                                                  select p;
 
-            foreach (var xElement in xmlProperties)
+            foreach (XElement xElement in xmlProperties)
             {
-                var propName = xElement.Descendants("name").First().Value;
+                string propName = xElement.Descendants("name").First().Value;
                 var property = new Property(propName);
-                
+
                 // Check to see if this is an id property
-                var xAttribute = xElement.Attribute("type");
+                XAttribute xAttribute = xElement.Attribute("type");
                 if (xAttribute != null)
                 {
-                    var id = xAttribute.Value;
+                    string id = xAttribute.Value;
                     if (id != null && id == "id")
                     {
                         property.IsIdProperty = true;
                     }
                 }
-
-                var comparatorName = xElement.Descendants("comparator").First().Value;
-                property.Comparator = GetComparatorFromString(comparatorName);
-                property.LowProbability = xElement.Descendants("low").Select(x => double.Parse(x.Value)).First();
-                property.HighProbability = xElement.Descendants("high").Select(x => double.Parse(x.Value)).First();
-                properties.Add(property);
+                else
+                {
+                    string comparatorName = xElement.Descendants("comparator").First().Value;
+                    property.Comparator = GetComparatorFromString(comparatorName);
+                    property.LowProbability = xElement.Descendants("low").Select(x => double.Parse(x.Value)).First();
+                    property.HighProbability = xElement.Descendants("high").Select(x => double.Parse(x.Value)).First();
+                    properties.Add(property);
+                }
             }
 
             cfg.SetProperties(properties);
-
-            // Get the appropriate nodes using XPath...
-            //var xpd = new XPathDocument(file);
-            //XPathNavigator xpn = xpd.CreateNavigator();
-            //XPathNodeIterator xpi = xpn.Select("/duke/schema/*");
-
-            //var properties = new List<Property>();
-
-            //while (xpi.MoveNext()) // each schema node
-            //{
-            //    if (xpi.Current != null && xpi.Current.Name == "threshold")
-            //    {
-            //        cfg.Threshold = Double.Parse(xpi.Current.Value);
-            //    }
-
-            //    if (xpi.Current != null && xpi.Current.Name == "property")
-            //    {
-            //        properties.Add(GetPropertyFromXml(xpi, xpn));
-            //    }
-            //}
-
-            //cfg.SetProperties(properties);
 
             //// Get the datasources
             //XPathNodeIterator dsi = xpn.Select("/duke/*[not(self::schema)]");
@@ -90,6 +71,18 @@ namespace Duke
             //        var datasource = GetCsvDataSourceFromXml(dsi, xpn);
             //    }
             //}
+            var dataSources = from d in xml.Elements()
+                              where d.Name != "schema"
+                              select d;
+
+            foreach (var dataSource in dataSources)
+            {
+                if (dataSource.Name == "csv")
+                {
+                    
+                }
+            }
+            
 
             return cfg;
         }

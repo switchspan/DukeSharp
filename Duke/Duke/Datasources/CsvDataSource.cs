@@ -36,7 +36,7 @@ namespace Duke.Datasources
             _directreader = reader;
         }
 
-        public RecordIterator GetRecords()
+        public new RecordIterator GetRecords()
         {
             if (_directreader == null)
             {
@@ -52,25 +52,14 @@ namespace Duke.Datasources
                 }
                 else
                 {
-                    if (FileEncoding == null)
-                    {
-                        sr = new StreamReader(File);
-                    }
-                    else
-                    {
-                        sr = new StreamReader(File, FileEncoding);
-                    }
+                    sr = FileEncoding == null ? new StreamReader(File) : new StreamReader(File, FileEncoding);
                 }
 
                 return new CsvRecordIterator(this, new CsvReader(sr));
             }
             catch (FileNotFoundException e)
             {
-                throw new DukeConfigException(String.Format("Couldn't find CSV file '{0}'", File));
-            }
-            catch (IOException e)
-            {
-                throw;
+                throw new DukeConfigException(String.Format("Couldn't find CSV file '{0}' {1}", File, e.Message));
             }
         }
 
