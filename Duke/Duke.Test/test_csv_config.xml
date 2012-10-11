@@ -1,0 +1,59 @@
+﻿<!--
+
+  A configuration for looking for duplicates in the Semantic Web Dogfood
+  Corpus from http://data.semanticweb.org/
+
+  To try it, run
+
+    java no.priv.garshol.duke.Duke -T=dogfood-test.txt -t dogfood.xml
+
+  This will show a comparison of results with known correct data in
+  dogfood-test.txt.
+
+  For more info, see
+    http://code.google.com/p/duke/wiki/SemanticDogfood
+
+-->
+<duke>
+  <schema>
+    <threshold>0.89</threshold>
+    <!--maybe-threshold>0.80</maybe-threshold-->
+    <!--path>/tmp/duke</path-->
+
+    <property type="id">
+      <name>ID</name>
+    </property>
+
+    <property>
+      <name>NAME</name>
+      <comparator>no.priv.garshol.duke.comparators.JaroWinklerTokenized</comparator>
+      <low>0.2</low>
+      <high>0.88</high>
+    </property>
+    <property>
+      <name>MBOX_HASH</name>
+      <comparator>no.priv.garshol.duke.comparators.ExactComparator</comparator>
+      <low>0.48</low>
+      <high>0.6</high>
+    </property>
+    <property>
+      <name>AFFILIATION</name>
+      <comparator>no.priv.garshol.duke.comparators.ExactComparator</comparator>
+      <low>0.48</low>
+      <high>0.6</high>
+    </property>
+    <property>
+      <name>HOMEPAGE</name>
+      <comparator>no.priv.garshol.duke.comparators.ExactComparator</comparator>
+      <low>0.48</low>
+      <high>0.6</high>
+    </property>
+  </schema>
+
+  <csv>
+    <param name="input-file" value="leads_test.csv" />
+    <param name="header-line" value="true" />
+    <column name ="ID" />
+  </csv>
+  
+</duke>
