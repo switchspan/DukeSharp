@@ -26,7 +26,7 @@ namespace Duke
 
             // Get the threshold
             double threshold =
-                xml.Elements("schema").Descendants("threshold").Select(x => double.Parse(x.Value)).First();
+                xml.Elements("schema").Descendants("threshold").Select(x => double.Parse(x.Value)).FirstOrDefault();
             cfg.Threshold = threshold;
 
             // Get all of the properties
@@ -51,10 +51,10 @@ namespace Duke
                 }
                 else
                 {
-                    string comparatorName = xElement.Descendants("comparator").First().Value;
+                    string comparatorName = xElement.Descendants("comparator").FirstOrDefault().Value;
                     property.Comparator = GetComparatorFromString(comparatorName);
-                    property.LowProbability = xElement.Descendants("low").Select(x => double.Parse(x.Value)).First();
-                    property.HighProbability = xElement.Descendants("high").Select(x => double.Parse(x.Value)).First();
+                    property.LowProbability = xElement.Descendants("low").Select(x => double.Parse(x.Value)).FirstOrDefault();
+                    property.HighProbability = xElement.Descendants("high").Select(x => double.Parse(x.Value)).FirstOrDefault();
                     properties.Add(property);
                 }
             }
@@ -79,7 +79,35 @@ namespace Duke
             {
                 if (dataSource.Name == "csv")
                 {
-                    
+                    var csvDs = new CsvDataSource();
+                    // get all of the parameters
+                    var csvParams = from p in dataSource.Elements()
+                              where p.Name == "param"
+                              select p;
+
+                    foreach (var csvParam in csvParams)
+                    {
+                        var paramName = csvParam.Attribute("name").Value;
+                        //paramName.Dump("paramname");
+                        switch (paramName)
+                        {
+                            case "input-file":
+                                csvDs.File = csvParam.Attribute("value").Value;
+                                break;
+                            case "header-line":
+                                csvDs.HasHeader = (csvParam.Attribute("value").Value.ToLower().Trim() == "true");
+                                break;
+                            case "skip-lines":
+                                csvDs.SkipLines = csvParam.Attribute("value").Value.Select(x => (int) x).FirstOrDefault();
+                                break;
+                        }
+                    }
+
+
+                    var input_file = dataSource.Elements("param").Where(x => x.Attribute("name").Value == "input-file").Select(x => x.Attribute("value").Value).FirstOrDefault();
+                    var hasHeader = dataSource.Elements().Where(x => x.Attribute("name").Value == "header_line").Select(x => x.Attribute("value").Value.ToLower().Trim() == "true").FirstOrDefault();
+                    var numSkipLines = dataSource.Elements().Where(x => x.Attribute("name").Value == "skip-lines").Select(x => Int32.Parse(x.Attribute("value").Value)).FirstOrDefault();
+
                 }
             }
             
