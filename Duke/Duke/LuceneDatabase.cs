@@ -7,6 +7,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using NLog;
 using Directory = Lucene.Net.Store.Directory;
 using Version = Lucene.Net.Util.Version;
 
@@ -18,6 +19,8 @@ namespace Duke
     /// </summary>
     public class LuceneDatabase : IDatabase
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         #region Private member variables
 
         private static int SEARCH_EXPANSION_FACTOR = 1;
@@ -26,9 +29,9 @@ namespace Duke
         private readonly QueryResultTracker _maintracker;
         private Directory _directory;
         private IndexWriter _iwriter;
-        private IndexSearcher _searcher;
         private int _maxSearchHits;
         private float _minRelevance;
+        private IndexSearcher _searcher;
 
         #endregion
 
@@ -48,11 +51,10 @@ namespace Duke
                 OpenIndexes(overwrite);
                 OpenSearchers();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                throw; //TODO: Log this...
+                logger.Error("Error initializing object: {0}", ex.Message);
             }
-
         }
 
         #endregion
@@ -95,7 +97,7 @@ namespace Duke
             }
             catch (Exception ex)
             {
-                throw; //TODO: Log this...
+                logger.Error("Error adding document to index writer: {0}", ex.Message);
             }
         }
 
@@ -119,7 +121,7 @@ namespace Duke
             }
             catch (Exception ex)
             {
-                throw; //TODO: log this...
+                logger.Error("Error flushing changes to disk: {0}", ex.Message);
             }
         }
 
@@ -161,7 +163,7 @@ namespace Duke
             }
             catch (Exception ex)
             {
-                throw; //TODO: logging here...
+                logger.Error("Error closing database: {0}", ex.Message);
             }
         }
 
@@ -188,7 +190,7 @@ namespace Duke
                 }
                 catch (Exception ex)
                 {
-                    throw; //TODO: log this...
+                    logger.Error("Error opening indexes: {0}", ex.Message);
                 }
             }
         }
@@ -201,7 +203,7 @@ namespace Duke
             }
             catch (Exception ex)
             {
-                throw; //TODO: log this...
+                logger.Error("Error opening searchers: {0}", ex.Message);
             }
         }
 

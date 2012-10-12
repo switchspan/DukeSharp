@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using Duke.Utils;
+using NLog;
 
 namespace Duke.Cleaners
 {
     public class MappingFileCleaner : ICleaner
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private Dictionary<string, string> _mapping; 
 
         public string Clean(string value)
@@ -41,8 +44,7 @@ namespace Duke.Cleaners
             }
             catch (System.Exception ex)
             {
-                //TODO: Add better exception handling...
-                throw;
+                logger.Error("Error settings mapping file: {0}", ex.Message);
             }
         }
     }

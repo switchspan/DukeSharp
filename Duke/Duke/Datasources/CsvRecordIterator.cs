@@ -1,11 +1,15 @@
 ﻿using System;
 using System.IO;
 using Duke.Utils;
+using NLog;
 
 namespace Duke.Datasources
 {
     public class CsvRecordIterator : RecordIterator
     {
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         #region Private member variables
 
         private readonly RecordBuilder _builder;
@@ -90,7 +94,7 @@ namespace Duke.Datasources
             }
             catch (IOException e)
             {
-                throw; //TODO: Log this...
+                logger.Error("Error finding next record: {0}", e.Message);
             }
 
             if (row == null)

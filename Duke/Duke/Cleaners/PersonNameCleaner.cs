@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Duke.Utils;
+using NLog;
 
 namespace Duke.Cleaners
 {
     public class PersonNameCleaner : ICleaner
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private LowerCaseNormalizeCleaner _sub;
         private Dictionary<String, String> _mapping; 
 
@@ -22,8 +25,7 @@ namespace Duke.Cleaners
             }
             catch (System.Exception ex)
             {
-                //TODO: Add better error handling here
-                throw;
+               logger.Error("Error initializing object: {0}", ex.Message);
             }
         }
 
