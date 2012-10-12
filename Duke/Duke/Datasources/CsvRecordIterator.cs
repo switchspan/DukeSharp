@@ -7,8 +7,7 @@ namespace Duke.Datasources
 {
     public class CsvRecordIterator : RecordIterator
     {
-
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         #region Private member variables
 
@@ -91,29 +90,28 @@ namespace Duke.Datasources
             try
             {
                 row = _reader.Next();
+                if (row == null)
+                {
+                    _nextrecord = null; // there isn't any next record
+                    return;
+                }
+
+                // build a record from the current row
+                _builder.NewRecord();
+                for (int ix = 0; ix < _column.Length; ix++)
+                {
+                    if (_index[ix] >= row.Length)
+                        break;
+
+                    _builder.AddValue(_column[ix], row[_index[ix]]);
+                }
+
+                _nextrecord = _builder.GetRecord();
             }
             catch (IOException e)
             {
                 logger.Error("Error finding next record: {0}", e.Message);
             }
-
-            if (row == null)
-            {
-                _nextrecord = null; // there isn't any next record
-                return;
-            }
-
-            // build a record from the current row
-            _builder.NewRecord();
-            for (int ix = 0; ix < _column.Length; ix++)
-            {
-                if (_index[ix] >= row.Length)
-                    break;
-
-                _builder.AddValue(_column[ix], row[_index[ix]]);
-            }
-
-            _nextrecord = _builder.GetRecord();
         }
 
         public bool HasNext()
