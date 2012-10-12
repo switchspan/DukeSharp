@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Duke.Cleaners;
 using Duke.Comparators;
 using Duke.Datasources;
 
@@ -80,39 +83,42 @@ namespace Duke
                 if (dataSource.Name == "csv")
                 {
                     var csvDs = new CsvDataSource();
-                    // get all of the parameters
-                    var csvParams = from p in dataSource.Elements()
-                              where p.Name == "param"
-                              select p;
+                    var csvParams = GetParametersTable(dataSource);
+                    csvDs.File = csvParams["input-file"].ToString();
+                    csvDs.HasHeader = (csvParams["header-line"].ToString().ToLower() == "true");
+                    var skipLines = 0;
 
-                    foreach (var csvParam in csvParams)
+                    csvDs.SkipLines = Int32.TryParse(csvParams["skip-lines"].ToString(), out skipLines) ? skipLines : 0;
+                    csvDs.FileEncoding = GetTextEncodingFromString(csvParams["encoding"].ToString());
+
+                    var cols = GetDataSourceColumns(dataSource);
+                    foreach (var column in cols)
                     {
-                        var paramName = csvParam.Attribute("name").Value;
-                        //paramName.Dump("paramname");
-                        switch (paramName)
-                        {
-                            case "input-file":
-                                csvDs.File = csvParam.Attribute("value").Value;
-                                break;
-                            case "header-line":
-                                csvDs.HasHeader = (csvParam.Attribute("value").Value.ToLower().Trim() == "true");
-                                break;
-                            case "skip-lines":
-                                csvDs.SkipLines = csvParam.Attribute("value").Value.Select(x => (int) x).FirstOrDefault();
-                                break;
-                        }
+                        csvDs.AddColumn(column);
                     }
-
-
-                    var input_file = dataSource.Elements("param").Where(x => x.Attribute("name").Value == "input-file").Select(x => x.Attribute("value").Value).FirstOrDefault();
-                    var hasHeader = dataSource.Elements().Where(x => x.Attribute("name").Value == "header_line").Select(x => x.Attribute("value").Value.ToLower().Trim() == "true").FirstOrDefault();
-                    var numSkipLines = dataSource.Elements().Where(x => x.Attribute("name").Value == "skip-lines").Select(x => Int32.Parse(x.Attribute("value").Value)).FirstOrDefault();
 
                 }
             }
             
 
             return cfg;
+        }
+
+        private static Hashtable GetParametersTable(XElement dataSource)
+        {
+            var paramTable = new Hashtable();
+
+            // get all of the parameters
+            var csvParams = from p in dataSource.Elements()
+                            where p.Name == "param"
+                            select p;
+
+            foreach (var csvParam in csvParams)
+            {
+                paramTable.Add((string)csvParam.Attributes("name").FirstOrDefault(), (string)csvParam.Attributes("value").FirstOrDefault());
+            }
+
+            return paramTable;
         }
 
         private static Property GetPropertyFromXml(XPathNodeIterator xpi, XPathNavigator xpn)
@@ -157,11 +163,32 @@ namespace Duke
             return null;
         }
 
-        private static CsvDataSource GetCsvDataSourceFromXml(XPathNodeIterator xpi, XPathNavigator xpn)
+        /// <summary>
+        /// Gets the data source columns.
+        /// </summary>
+        /// <param name="dataSourceXml">The data source XML.</param>
+        /// <returns></returns>
+        private static List<Column> GetDataSourceColumns(XElement dataSourceXml)
         {
-            return null;
+            var cols = dataSourceXml.Elements("column")
+            .Select(x => new
+            {
+                name = (string)x.Attributes("name").FirstOrDefault(),
+                cleaner = (string)x.Attributes("cleaner").FirstOrDefault(),
+                property = (string)x.Attributes("property").FirstOrDefault(),
+                prefix = (string)x.Attributes("prefix").FirstOrDefault()
+
+            });
+
+            return cols.Select(col => new Column(col.name, col.property, col.prefix, GetCleanerFromString(col.cleaner))).ToList();
         }
 
+
+        /// <summary>
+        /// Gets the comparator from string.
+        /// </summary>
+        /// <param name="comparatorName">Name of the comparator.</param>
+        /// <returns></returns>
         private static IComparator GetComparatorFromString(string comparatorName)
         {
             // strip the java namespacing from the string
@@ -206,6 +233,71 @@ namespace Duke
                     return new WeightedLevenshtein();
                 default: // we don't know what type of comparator this is, so return null.
                     return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the cleaner from string.
+        /// </summary>
+        /// <param name="cleanerName">Name of the cleaner.</param>
+        /// <returns></returns>
+        private static ICleaner GetCleanerFromString(string cleanerName)
+        {
+            // strip the java namespacing from the string
+            string cleaner = cleanerName.Trim().ToLower().Replace("no.priv.garshol.duke.cleaners.", "");
+
+            switch (cleaner)
+            {
+                case "digitsonlycleaner":
+                    return new DigitsOnlyCleaner();
+
+                case "familycommagivencleaner":
+                    return new FamilyCommaGivenCleaner();
+
+                case "lowercasenormalizecleaner":
+                    return new LowerCaseNormalizeCleaner();
+
+                case "mappingfilecleaner":
+                    return new MappingFileCleaner();
+
+                case "nocleaningcleaner":
+                    return new NoCleaningCleaner();
+
+                case "norwegianaddresscleaner":
+                    return new NorwegianAddressCleaner();
+
+                case "norwegiancompanynamecleaner":
+                    return new NorwegianCompanyNameCleaner();
+
+                case "personnamecleaner":
+                    return new PersonNameCleaner();
+
+                case "regexpcleaner":
+                    return new RegexpCleaner();
+
+                case "trimcleaner":
+                    return new TrimCleaner();
+
+                
+                default: // we don't know what type of comparator this is, so return null.
+                    return null;
+            }
+        }
+
+        private static Encoding GetTextEncodingFromString(string encoding)
+        {
+            switch (encoding.ToLower().Trim())
+            {
+                case "ascii":
+                    return Encoding.ASCII;
+                case "utf8":
+                    return Encoding.UTF8;
+                case "utf7":
+                    return Encoding.UTF7;
+                case "unicode":
+                    return Encoding.Unicode;
+                default:
+                    return Encoding.Default;
             }
         }
     }
