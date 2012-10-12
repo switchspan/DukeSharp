@@ -25,7 +25,6 @@ namespace Duke.Datasources
         public CsvDataSource()
         {
             HasHeader = true;
-
         }
         #endregion
 

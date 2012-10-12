@@ -1,0 +1,3 @@
+DukeSharp ToDo:
+- Fix IEnumerable issues with datasources
+- Fix MS SQL server access

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Duke.Utils;
 using NLog;
@@ -127,5 +128,10 @@ namespace Duke.Datasources
         }
 
         #endregion
+
+        public override IEnumerator<IRecord> GetEnumerator()
+        {
+         
+        }
     }
 }
