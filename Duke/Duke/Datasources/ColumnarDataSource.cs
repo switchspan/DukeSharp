@@ -25,16 +25,10 @@ namespace Duke.Datasources
 
         #region Member methods
 
-        public RecordIterator GetRecords()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract RecordIterator GetRecords();
 
-        public void SetLogger()
-        {
-            throw new NotImplementedException();
-        }
-
+        public abstract void SetLogger();
+        
         public void AddColumn(Column column)
         {
             string columnKey = column.GetName();
@@ -59,7 +53,6 @@ namespace Duke.Datasources
             List<Column> allColumns = _columns.Values.SelectMany(col => col).ToList();
             return allColumns;
         }
-
 
         protected abstract string GetSourceName();
 

@@ -11,16 +11,10 @@ namespace Duke
     /// </summary>
     public abstract class RecordIterator : IEnumerable<IRecord>
     {
-        public IEnumerator<IRecord> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IEnumerator<IRecord> GetEnumerator();
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
+        public abstract System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator();
+        
         /// <summary>
         /// Releases any resources held by this iterator, and cleans up any temp storage
         /// </summary>

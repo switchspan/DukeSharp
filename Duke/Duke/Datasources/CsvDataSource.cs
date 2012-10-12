@@ -36,7 +36,7 @@ namespace Duke.Datasources
             _directreader = reader;
         }
 
-        public new RecordIterator GetRecords()
+        public override RecordIterator GetRecords()
         {
             if (_directreader == null)
             {
@@ -61,6 +61,11 @@ namespace Duke.Datasources
             {
                 throw new DukeConfigException(String.Format("Couldn't find CSV file '{0}' {1}", File, e.Message));
             }
+        }
+
+        public override void SetLogger()
+        {
+            throw new NotImplementedException();
         }
 
         protected override string GetSourceName()

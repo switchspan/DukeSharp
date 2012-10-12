@@ -43,7 +43,7 @@ namespace Duke.Datasources
             _types.Add(types);
         }
 
-        public RecordIterator GetRecords()
+        public override RecordIterator GetRecords()
         {
             if (DirectReader == null)
             {
@@ -70,6 +70,11 @@ namespace Duke.Datasources
                 throw new DukeException(e.Message);
             }
             return null;
+        }
+
+        public override void SetLogger()
+        {
+            throw new NotImplementedException();
         }
 
 

@@ -7,6 +7,9 @@ using NLog;
 
 namespace Duke.Cleaners
 {
+    /// <summary>
+    /// Cleaner for person names.
+    /// </summary>
     public class PersonNameCleaner : ICleaner
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();

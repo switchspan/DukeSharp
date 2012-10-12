@@ -56,8 +56,10 @@ namespace Duke
                 {
                     string comparatorName = xElement.Descendants("comparator").FirstOrDefault().Value;
                     property.Comparator = GetComparatorFromString(comparatorName);
-                    property.LowProbability = xElement.Descendants("low").Select(x => double.Parse(x.Value)).FirstOrDefault();
-                    property.HighProbability = xElement.Descendants("high").Select(x => double.Parse(x.Value)).FirstOrDefault();
+                    property.LowProbability =
+                        xElement.Descendants("low").Select(x => double.Parse(x.Value)).FirstOrDefault();
+                    property.HighProbability =
+                        xElement.Descendants("high").Select(x => double.Parse(x.Value)).FirstOrDefault();
                     properties.Add(property);
                 }
             }
@@ -74,32 +76,41 @@ namespace Duke
             //        var datasource = GetCsvDataSourceFromXml(dsi, xpn);
             //    }
             //}
-            var dataSources = from d in xml.Elements()
-                              where d.Name != "schema"
-                              select d;
+            IEnumerable<XElement> dataSources = from d in xml.Elements()
+                                                where d.Name != "schema"
+                                                select d;
 
-            foreach (var dataSource in dataSources)
+            foreach (XElement dataSource in dataSources)
             {
                 if (dataSource.Name == "csv")
                 {
                     var csvDs = new CsvDataSource();
-                    var csvParams = GetParametersTable(dataSource);
+                    Hashtable csvParams = GetParametersTable(dataSource);
                     csvDs.File = csvParams["input-file"].ToString();
-                    csvDs.HasHeader = (csvParams["header-line"].ToString().ToLower() == "true");
-                    var skipLines = 0;
+                    if (csvParams.Contains("header-line"))
+                        csvDs.HasHeader = (csvParams["header-line"].ToString().ToLower() == "true");
 
-                    csvDs.SkipLines = Int32.TryParse(csvParams["skip-lines"].ToString(), out skipLines) ? skipLines : 0;
-                    csvDs.FileEncoding = GetTextEncodingFromString(csvParams["encoding"].ToString());
+                    if (csvParams.Contains("skip-lines"))
+                    {
+                        int skipLines = 0;
+                        csvDs.SkipLines = Int32.TryParse(csvParams["skip-lines"].ToString(), out skipLines)
+                                              ? skipLines
+                                              : 0;
+                    }
 
-                    var cols = GetDataSourceColumns(dataSource);
-                    foreach (var column in cols)
+                    csvDs.FileEncoding = csvParams.Contains("encoding")
+                                             ? GetTextEncodingFromString(csvParams["encoding"].ToString())
+                                             : Encoding.Default;
+
+                    List<Column> cols = GetDataSourceColumns(dataSource);
+                    foreach (Column column in cols)
                     {
                         csvDs.AddColumn(column);
                     }
 
+                    cfg.AddDataSource(0, csvDs);
                 }
             }
-            
 
             return cfg;
         }
@@ -109,59 +120,60 @@ namespace Duke
             var paramTable = new Hashtable();
 
             // get all of the parameters
-            var csvParams = from p in dataSource.Elements()
-                            where p.Name == "param"
-                            select p;
+            IEnumerable<XElement> csvParams = from p in dataSource.Elements()
+                                              where p.Name == "param"
+                                              select p;
 
-            foreach (var csvParam in csvParams)
+            foreach (XElement csvParam in csvParams)
             {
-                paramTable.Add((string)csvParam.Attributes("name").FirstOrDefault(), (string)csvParam.Attributes("value").FirstOrDefault());
+                paramTable.Add((string) csvParam.Attributes("name").FirstOrDefault(),
+                               (string) csvParam.Attributes("value").FirstOrDefault());
             }
 
             return paramTable;
         }
 
-        private static Property GetPropertyFromXml(XPathNodeIterator xpi, XPathNavigator xpn)
-        {
-            if (xpi.Current != null && xpi.Current.Name == "property")
-            {
-                var prop = new Property("UNDEFINED");
-                string type;
+        //private static Property GetPropertyFromXml(XPathNodeIterator xpi, XPathNavigator xpn)
+        //{
+        //    if (xpi.Current != null && xpi.Current.Name == "property")
+        //    {
+        //        var prop = new Property("UNDEFINED");
+        //        string type;
 
-                type = xpi.Current.GetAttribute("type", xpn.NamespaceURI);
-                prop.IsIdProperty = (!String.IsNullOrEmpty(type) && type.ToLower() == "id");
+        //        type = xpi.Current.GetAttribute("type", xpn.NamespaceURI);
+        //        prop.IsIdProperty = (!String.IsNullOrEmpty(type) && type.ToLower() == "id");
 
-                XPathNodeIterator propChild = xpi.Current.SelectChildren(XPathNodeType.Element);
-                while (propChild.MoveNext())
-                {
-                    if (propChild.Current != null)
-                    {
-                        string elementName = propChild.Current.Name;
-                        string elementValue = propChild.Current.Value;
+        //        XPathNodeIterator propChild = xpi.Current.SelectChildren(XPathNodeType.Element);
+        //        while (propChild.MoveNext())
+        //        {
+        //            if (propChild.Current != null)
+        //            {
+        //                string elementName = propChild.Current.Name;
+        //                string elementValue = propChild.Current.Value;
 
-                        switch (elementName)
-                        {
-                            case "name":
-                                prop.Name = elementValue.Trim();
-                                break;
-                            case "low":
-                                prop.LowProbability = Double.Parse(elementValue);
-                                break;
-                            case "high":
-                                prop.HighProbability = Double.Parse(elementValue);
-                                break;
-                            case "comparator":
-                                prop.Comparator = GetComparatorFromString(elementValue);
-                                break;
-                        }
-                    }
-                }
+        //                switch (elementName)
+        //                {
+        //                    case "name":
+        //                        prop.Name = elementValue.Trim();
+        //                        break;
+        //                    case "low":
+        //                        prop.LowProbability = Double.Parse(elementValue);
+        //                        break;
+        //                    case "high":
+        //                        prop.HighProbability = Double.Parse(elementValue);
+        //                        break;
+        //                    case "comparator":
+        //                        prop.Comparator = GetComparatorFromString(elementValue);
+        //                        break;
+        //                }
+        //            }
+        //        }
 
-                return (prop.Name != "UNDEFINED") ? prop : null;
-            }
+        //        return (prop.Name != "UNDEFINED") ? prop : null;
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         /// <summary>
         /// Gets the data source columns.
@@ -171,16 +183,17 @@ namespace Duke
         private static List<Column> GetDataSourceColumns(XElement dataSourceXml)
         {
             var cols = dataSourceXml.Elements("column")
-            .Select(x => new
-            {
-                name = (string)x.Attributes("name").FirstOrDefault(),
-                cleaner = (string)x.Attributes("cleaner").FirstOrDefault(),
-                property = (string)x.Attributes("property").FirstOrDefault(),
-                prefix = (string)x.Attributes("prefix").FirstOrDefault()
+                .Select(x => new
+                                 {
+                                     name = (string) x.Attributes("name").FirstOrDefault(),
+                                     cleaner = (string) x.Attributes("cleaner").FirstOrDefault(),
+                                     property = (string) x.Attributes("property").FirstOrDefault(),
+                                     prefix = (string) x.Attributes("prefix").FirstOrDefault()
+                                 });
 
-            });
-
-            return cols.Select(col => new Column(col.name, col.property, col.prefix, GetCleanerFromString(col.cleaner))).ToList();
+            return
+                cols.Select(col => new Column(col.name, col.property, col.prefix, GetCleanerFromString(col.cleaner))).
+                    ToList();
         }
 
 
@@ -243,6 +256,9 @@ namespace Duke
         /// <returns></returns>
         private static ICleaner GetCleanerFromString(string cleanerName)
         {
+            if (String.IsNullOrEmpty(cleanerName))
+                return null;
+
             // strip the java namespacing from the string
             string cleaner = cleanerName.Trim().ToLower().Replace("no.priv.garshol.duke.cleaners.", "");
 
@@ -278,7 +294,7 @@ namespace Duke
                 case "trimcleaner":
                     return new TrimCleaner();
 
-                
+
                 default: // we don't know what type of comparator this is, so return null.
                     return null;
             }
@@ -286,6 +302,8 @@ namespace Duke
 
         private static Encoding GetTextEncodingFromString(string encoding)
         {
+            if (String.IsNullOrEmpty(encoding)) return Encoding.Default;
+
             switch (encoding.ToLower().Trim())
             {
                 case "ascii":

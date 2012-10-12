@@ -60,14 +60,16 @@ namespace Duke.Datasources
                 return; // nothing here, move on
 
             String prop = col.GetProperty();
-            List<String> values = _record[prop];
-            if (values == null)
+
+            if (!_record.ContainsKey(prop))
             {
-                values = new List<string>();
+                var values = new List<string>();
                 _record.Add(prop, values);
             }
-
-            values.Add(value);
+            else
+            {
+                _record[prop].Add(value);
+            }
         }
 
         public void SetValue(string column, string value)
