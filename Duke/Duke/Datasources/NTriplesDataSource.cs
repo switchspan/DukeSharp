@@ -43,7 +43,7 @@ namespace Duke.Datasources
             _types.Add(types);
         }
 
-        public override RecordIterator GetRecords()
+        public override Records GetRecords()
         {
             if (DirectReader == null)
             {

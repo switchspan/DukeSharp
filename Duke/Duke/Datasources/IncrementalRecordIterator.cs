@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Duke.Datasources
 {
-    public class IncrementalRecordIterator : RecordIterator
+    public class IncrementalRecordIterator : Records
     {
         #region Private member variables
 
@@ -22,5 +22,6 @@ namespace Duke.Datasources
         #region Member methods
 
         #endregion
+
     }
 }

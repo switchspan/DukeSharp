@@ -25,7 +25,7 @@ namespace Duke.Datasources
 
         #region Member methods
 
-        public abstract RecordIterator GetRecords();
+        public abstract Records GetRecords();
 
         public abstract void SetLogger();
         

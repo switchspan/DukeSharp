@@ -117,7 +117,7 @@ namespace Duke
             foreach (IDataSource dataSource in sources)
             {
                 //dataSource.SetLogger();
-                RecordIterator it2 = dataSource.GetRecords();
+                Records it2 = dataSource.GetRecords();
                 try
                 {
                     IEnumerator<IRecord> recEnumeration = it2.GetEnumerator();

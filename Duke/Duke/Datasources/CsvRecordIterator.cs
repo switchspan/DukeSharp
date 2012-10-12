@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Duke.Utils;
 using NLog;
 
 namespace Duke.Datasources
 {
-    public class CsvRecordIterator : RecordIterator
+    public class CsvRecordIterator : Records
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -24,6 +25,7 @@ namespace Duke.Datasources
 
         public CsvRecordIterator(CsvDataSource datasource, CsvReader reader)
         {
+            
             _reader = reader;
             _builder = new RecordBuilder(datasource);
 
@@ -48,11 +50,7 @@ namespace Duke.Datasources
             else
             {
                 // find highest column number
-                int high = 0;
-                foreach (Column c in datasource.GetColumns())
-                {
-                    high = Math.Max(high, Int32.Parse(c.GetName()));
-                }
+                int high = datasource.GetColumns().Select(c => Int32.Parse(c.GetName())).Concat(new[] {0}).Max();
 
                 // build corresponding index
                 header = new string[high];
@@ -64,7 +62,7 @@ namespace Duke.Datasources
 
             // build the 'index' and 'column' indexes
             int count = 0;
-            foreach (Column column in datasource.GetColumns())
+            foreach (var column in datasource.GetColumns())
             {
                 for (int ix = 0; ix < header.Length; ix++)
                 {
@@ -128,10 +126,5 @@ namespace Duke.Datasources
         }
 
         #endregion
-
-        public override IEnumerator<IRecord> GetEnumerator()
-        {
-         
-        }
     }
 }

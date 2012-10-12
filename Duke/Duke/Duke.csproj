@@ -81,6 +81,7 @@
     <Compile Include="DatabaseProperties.cs" />
     <Compile Include="Datasources\ColumnarDataSource.cs" />
     <Compile Include="Datasources\CsvDataSource.cs" />
+    <Compile Include="Datasources\CsvRecordEnumerator.cs" />
     <Compile Include="Datasources\CsvRecordIterator.cs" />
     <Compile Include="Datasources\IncrementalRecordIterator.cs" />
     <Compile Include="Datasources\NTriplesDataSource.cs" />
@@ -116,7 +117,8 @@
     <Compile Include="QueryResultTracker.cs" />
     <Compile Include="RDBMSLinkDatabase.cs" />
     <Compile Include="RecordImpl.cs" />
-    <Compile Include="RecordIterator.cs" />
+    <Compile Include="Records.cs" />
+    <Compile Include="RecordsEnum.cs" />
     <Compile Include="Utils\CsvReader.cs" />
     <Compile Include="Utils\NTriplesParser.cs" />
     <Compile Include="Utils\StringUtils.cs" />

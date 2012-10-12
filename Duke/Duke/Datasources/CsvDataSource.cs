@@ -35,7 +35,7 @@ namespace Duke.Datasources
             _directreader = reader;
         }
 
-        public override RecordIterator GetRecords()
+        public override Records GetRecords()
         {
             if (_directreader == null)
             {

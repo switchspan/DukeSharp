@@ -12,7 +12,7 @@ namespace Duke
     /// </summary>
     public interface IDataSource
     {
-        RecordIterator GetRecords();
+        Records GetRecords();
 
         void SetLogger(); //TODO: Change this over to NLog for logging...
 

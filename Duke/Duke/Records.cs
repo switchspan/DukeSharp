@@ -7,16 +7,36 @@ using System.Text;
 namespace Duke
 {
     /// <summary>
-    /// Special Iterator class for Record collections, in orde3r to add some 
+    /// Special Iterator class for Record collections, in order to add some 
     /// extra methods for resource management.
     /// </summary>
-    public abstract class RecordIterator : IEnumerable<IRecord>
+    public abstract class Records : IEnumerable<IRecord>
     {
-        public abstract IEnumerator<IRecord> GetEnumerator();
+        private readonly IRecord[] _records;
+
+        protected Records()
+        {
+            _records = new IRecord[0];
+        }
+
+        protected Records(IRecord[] rArray)
+        {
+            _records = new IRecord[rArray.Length];
+
+            for (int i = 0; i < rArray.Length; i++)
+            {
+                _records[i] = rArray[i];
+            }
+        }
+
+        public IEnumerator<IRecord> GetEnumerator()
+        {
+            return new RecordsEnum(_records);
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return (IEnumerator) GetEnumerator();
+            return GetEnumerator();
         }
 
         /// <summary>
@@ -25,7 +45,7 @@ namespace Duke
         public virtual void Close() {}
 
         /// <summary>
-        /// Informs the iterator taht the lates batch of records retrieved from teh iterator 
+        /// Informs the iterator that the latest batch of records retrieved from the iterator 
         /// has been processed. This may in some cases allow iterators to free resources,
         /// but iterators are not required to perform any action in response to this call.
         /// </summary>
